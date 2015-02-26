@@ -1,0 +1,57 @@
+@(request: play.api.mvc.RequestHeader, loginForm: play.api.data.Form[(String,String)], errorMsg: Option[String] = None)
+
+@import helper._
+@import securesocial.core.Registry
+@import securesocial.core.AuthenticationMethod._
+@import securesocial.core.providers.UsernamePasswordProvider.UsernamePassword
+@import Http.Context.Implicit
+
+
+
+@secure_formWrapper(request, "lasu - login", "") {
+
+    @errorMsg.map { msg =>
+        <div class="alert alert-danger">
+            @Messages(msg)
+        </div>
+    }
+
+
+
+  @defining( Registry.providers.all.values.filter( _.id != UsernamePassword) ) { externalProviders =>
+
+
+
+        @if( externalProviders.size > 0 ) {
+            <div class="clearfix">
+              <div class="information">
+              <p>@Messages("securesocial.login.instructions")</p>
+              </div>
+                <div style="margin-left: 20px;">
+                    @for(p <- externalProviders) {
+                        @provider(request, p.id)
+                    }
+                </p>
+                </div>
+            </div>
+        }
+        
+
+        @Registry.providers.get(UsernamePassword).map { up =>
+          <div class="clearfix">
+            <div style="margin-left: 20px;">
+              <div class="information">
+                @if(externalProviders.size > 0 ) {
+                    <p>@Messages("securesocial.login.useEmailAndPassword")</p>
+                } else {
+                    <p>@Messages("securesocial.login.useEmailAndPasswordOnly")</p>
+                }
+              </div>
+            </div>
+            @provider(request, "userpass", Some(loginForm))
+          </div>
+        }
+    }
+
+
+}

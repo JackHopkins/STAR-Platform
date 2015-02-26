@@ -1,0 +1,8 @@
+@(request: play.api.mvc.RequestHeader)
+
+@secure_formWrapper(request, "disscout - authorisation error", Messages("securesocial.notAuthorized.title")) {
+
+    <div class="alert alert-danger">
+        @Messages("securesocial.notAuthorized.message")
+    </div>
+}

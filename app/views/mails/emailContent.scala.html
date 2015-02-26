@@ -1,0 +1,17 @@
+@**
+*
+* The body of the email - headers et al are provided by calling templates
+*
+**@
+@(title: String, emailContent: Html)
+
+<div class="form-body">
+  <div class="form-title-bar">
+      @title
+  </div>
+  <div class="form-contents">
+    @emailContent
+  </div>
+</div>
+
+

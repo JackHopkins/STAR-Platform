@@ -1,0 +1,120 @@
+@(request: play.api.mvc.RequestHeader, providerId: String, loginForm: Option[play.api.data.Form[(String, String)]] = None)
+
+@import securesocial.core.Registry
+@import securesocial.core.IdentityProvider
+@import securesocial.core.providers.UsernamePasswordProvider
+@import securesocial.core.AuthenticationMethod._
+@import securesocial.core.providers.utils.RoutesHelper
+@import play.api.Logger
+@import helper._
+@implicitFieldConstructor = @{ FieldConstructor(views.html.ss.inputFieldConstructor.f) }
+
+@Registry.providers.get(providerId).map { provider =>
+            @if( provider.authMethod == OAuth1 || provider.authMethod == OAuth2 ) {
+                @defining( "securesocial/images/providers/%s.png".format(provider.id) ) { imageUrl =>
+                    <a href="@provider.authenticationUrl"> <img src="@RoutesHelper.at(imageUrl)"/></a>
+                }
+            }
+
+
+
+            @if( provider.authMethod == UserPassword ) {
+                <form action = "@securesocial.core.providers.utils.RoutesHelper.authenticateByPost("userpass").absoluteURL(IdentityProvider.sslEnabled)(request)"                
+                      class="form-horizontal whitetext" autocomplete="off" method="POST">
+                      
+                        <fieldset>
+                      <div class="verticalcenter">
+	<a href="index.htm"><img src="@routes.Assets.at("images/LASU-logo-black.png")" alt="LASU" class="brand" /></a>
+	<div class="panel">
+		<div class="panel-body">
+                      
+                
+                    <div class="row">
+                        <div class="form-group">
+                        @if( UsernamePasswordProvider.withUserNameSupport ) {
+                            
+                            <div class="col-sm-12">
+                              <div class="input-group input-group-lg">
+                                <span class="input-group-addon">
+                                  <span class="fa fa-user"></span>
+                                </span>
+                                <input type="email" class="form-control" name="username" placeholder="Email">
+                              </div>
+                            </div>
+                        } else {
+                           
+                            <div class="col-sm-12">
+                              <div class="input-group input-group-lg">
+                                <span class="input-group-addon">
+                                  <span class="fa fa-envelope"></span>
+                                </span>
+                                <input type="email" class="form-control" name="username" placeholder="Email">
+                              </div>
+                            </div>
+                        }
+                        </div>
+
+                        <div class="form-group">
+                          
+                            <div class="col-sm-12">
+                              <div class="input-group input-group-lg">
+                                <span class="input-group-addon">
+                                  <i class="fa fa-lock">&nbsp;</i>
+                                </span>
+                                <input type="password" class="form-control" name="password" placeholder="Password">
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <!--<div class="row">
+                        <div class="form-actions">
+                          <div class="col-xs-3 col-xs-offset-4 col-sm-3 col-sm-offset-4">
+                            <button type="submit" class="btn btn-default btn-lg btn-block">@Messages("securesocial.login.title")</button>
+                          </div>
+                        </div>
+                    </div>
+                   <div class="row">
+                        <div class="col-xs-10 col-xs-offset-1">
+                            <a href="@securesocial.core.providers.utils.RoutesHelper.startResetPassword()"><p>@Messages("securesocial.login.forgotPassword") </a></p>
+                        </div>
+                        
+                        <div class="col-xs-10 col-xs-offset-1">
+                            <p>@Messages("securesocial.login.signUp") <a href="@securesocial.core.providers.utils.RoutesHelper.startSignUp()">@Messages("securesocial.login.here")</a></p>
+                        </div>
+                    </div>
+                 -->
+                  
+                              <div class="panel-footer">
+			<a style="color:#d3d3d3;" href="@securesocial.core.providers.utils.RoutesHelper.startResetPassword()" class="pull-left btn btn-link" style="padding-left:0">Forgot password?</a>
+			
+			<div class="pull-right">
+				
+				<button type="submit" class="btn btn-black btn-lg btn-block">Log In</button>
+			</div>
+			<div class="pull-right">
+				
+				 <a href="@securesocial.core.providers.utils.RoutesHelper.startSignUp()"  class="btn btn-default btn-lg btn-block">Sign Up</a>
+			</div>
+			
+		</div>
+        
+</div>
+
+
+
+</div>
+</div>
+ </fieldset>
+                </form>
+                
+ 
+            }
+}.getOrElse {
+    @*****************************************
+     * Todo: throw a runtime exception? this might need improvement
+     *****************************************@
+    @Logger.error("[securesocial] unknown provider '%s'. Can't render it.".format(providerId))
+    { throw new RuntimeException("Unknown provider '%s') }
+}

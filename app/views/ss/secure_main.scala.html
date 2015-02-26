@@ -1,0 +1,75 @@
+@**
+*
+* Main template used for secure social templates due to the requirement for a request 
+*
+**@
+@(request: play.api.mvc.RequestHeader, title: String = "LASU")(content: Html)
+@import Http.Context.Implicit
+@import securesocial.core.providers.utils.RoutesHelper
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <!-- <title>@title</title> -->
+
+
+        <link rel="shortcut icon" type="image/ico" href="@routes.Assets.at("images/favicon.ico")">
+
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("css/bootstrap.min.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("fonts/font-awesome/css/font-awesome.min.css")">
+   		<link rel="stylesheet" href="@routes.Assets.at("css/styles.min.css?=113")">
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600' rel='stylesheet' type='text/css'>
+    
+     <script type="text/javascript" src="@routes.Assets.at("js/less.js")"></script>
+ 
+ 		
+ 		
+<!-- <link rel="stylesheet" href="@routes.Assets.at("css/mouseparallax.css")">-->
+
+ 		<style type="text/css">
+ 		   p {
+	       color: rgb(238,238,238);
+	       }
+ 		   label {
+ 		   color: rgb(238,238,238);
+ 		   }
+ 		   a {
+ 		   color: white;
+ 		   }
+ 		   button {
+ 		   color: rgb(238,238,238);
+ 		   }
+ 		</style>
+
+ 
+    </head>
+  <body class="focusedform">
+
+   <div id="background" class="mouse-bg"></div>
+      <div class="container-header">
+        <div class="container">
+        
+          @content
+        </div>
+      </div>  
+      @**
+      @include.footer()
+      **@
+    </body>
+    
+   		<script type='text/javascript' src="@routes.Assets.at("js/jquery-1.10.2.min.js")"></script> 
+		<script>
+
+$(document).ready(function() {
+//$('#background').mouseParallax({ moveFactor: 10 });
+$('body').height(3000);
+});
+
+</script>
+
+<!-- <script src="@routes.Assets.at("js/mouse.parallax.js")"></script>-->
+<script type='text/javascript' src="@routes.Assets.at("js/jqueryui-1.10.3.min.js")"></script> 
+<script type='text/javascript' src="@routes.Assets.at("js/bootstrap.min.js")"></script> 
+</html>
+

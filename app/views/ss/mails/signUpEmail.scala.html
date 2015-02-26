@@ -1,0 +1,17 @@
+@(request: play.api.mvc.RequestHeader, token: String)
+@import securesocial.core.IdentityProvider
+
+@mails.email(Messages("mails.sendSignUpEmail.title")) {
+  @mails.emailFormWrapper(Messages("Welcome to LASU!")) {
+
+    <div class="information">
+    
+        
+        <p>@Messages("You're almost on board with us and ready to start selling!")
+        <a href="@securesocial.core.providers.utils.RoutesHelper.signUp(token).absoluteURL(IdentityProvider.sslEnabled)(request)">
+            @Messages("Click here to complete your account.")
+        </a> 
+      </p>
+    </div>
+  }
+}

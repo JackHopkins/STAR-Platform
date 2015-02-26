@@ -1,0 +1,8 @@
+@(request: play.api.mvc.RequestHeader, pageTitle: String = "lasu.com", title: String)(content: Html)
+
+@secure_main(request, pageTitle) {
+
+  @formContent(title, content)
+  
+}
+
