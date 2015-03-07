@@ -1,13 +1,15 @@
-@(request: play.api.mvc.RequestHeader, user: securesocial.core.Identity)
-@import securesocial.core.IdentityProvider
+@(user: securesocial.core.BasicProfile)(implicit request: RequestHeader,env: securesocial.core.RuntimeEnvironment[_])
 
-@mails.email("LASU") {
-  @mails.emailFormWrapper("Welcome @user!") {
+@mails.email("Turnbulls MIS") {
+  @mails.emailFormWrapper("Welcome!") {
 
-     
+      <p>Welcome @user.firstName,</p>
+
       <p>
         Your new account is ready.
-        Click <a href="@securesocial.core.providers.utils.RoutesHelper.login.absoluteURL(IdentityProvider.sslEnabled)(request)">here</a> to log in
+        Click <a href="@env.routes.loginPageUrl(request)">here</a> to log in</p>
+@**        Click <a href="@securesocial.controllers.LoginPage.login.absoluteURL(IdentityProvider.sslEnabled)(request)">here</a> to log in
+**@
       </p>
 
   }

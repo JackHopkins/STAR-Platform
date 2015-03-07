@@ -1,11 +1,11 @@
-package models.users;
+package service;
 
-import models.users.User;
-import securesocial.core.Identity;
-import securesocial.core.java.Authorization;
+import models.User;
+import models.users.UserType;
 import service.UserCredential;
+import securesocial.core.java.Authorization;
 
-public class CheckAdminStatus implements Authorization<UserCredential> {
+public class AdminRole implements Authorization<UserCredential> {
     public boolean isAuthorized(UserCredential userCredential, String params[]) {
         return User.getUserType(userCredential.main.email().get()).equals(UserType.Admin);
     }

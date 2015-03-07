@@ -1,6 +1,5 @@
-@(request: play.api.mvc.RequestHeader)
-
-@secure_formWrapper(request, "disscout - authorisation error", Messages("securesocial.notAuthorized.title")) {
+@()(implicit request: RequestHeader, env: securesocial.core.RuntimeEnvironment[_])
+@secure_formWrapper(request, "Turnbulls MIS - authorisation error", Messages("securesocial.notAuthorized.title")) {
 
     <div class="alert alert-danger">
         @Messages("securesocial.notAuthorized.message")

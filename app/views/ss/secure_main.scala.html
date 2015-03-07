@@ -3,9 +3,8 @@
 * Main template used for secure social templates due to the requirement for a request 
 *
 **@
-@(request: play.api.mvc.RequestHeader, title: String = "LASU")(content: Html)
+@(request: play.api.mvc.RequestHeader, title: String = "turnbulls.com")(content: Html)
 @import Http.Context.Implicit
-@import securesocial.core.providers.utils.RoutesHelper
 
 <!DOCTYPE html>
 
@@ -72,4 +71,3 @@ $('body').height(3000);
 <script type='text/javascript' src="@routes.Assets.at("js/jqueryui-1.10.3.min.js")"></script> 
 <script type='text/javascript' src="@routes.Assets.at("js/bootstrap.min.js")"></script> 
 </html>
-

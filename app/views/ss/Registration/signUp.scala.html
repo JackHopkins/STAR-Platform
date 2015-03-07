@@ -1,23 +1,18 @@
-@(request: play.api.mvc.RequestHeader, signUpForm:play.api.data.Form[securesocial.controllers.Registration.RegistrationInfo], token: String)
+@(signUpForm: play.api.data.Form[securesocial.controllers.RegistrationInfo], token: String)(implicit request: RequestHeader,env: securesocial.core.RuntimeEnvironment[_])
 @import securesocial.core.providers.UsernamePasswordProvider
 @import securesocial.core.IdentityProvider
 @import helper._
-@implicitFieldConstructor = @{ FieldConstructor(views.html.ss.inputFieldConstructor.f) }
+@implicitFieldConstructor = @{ FieldConstructor(securesocial.views.html.inputFieldConstructor.f) }
 
-@ss.secure_formWrapper(request, "LASU - signup", Messages("") ) {
+@ss.secure_formWrapper(request, "Turnbulls MIS - signup", Messages("securesocial.signup.title") ) {
 
-    <form action="@securesocial.core.providers.utils.RoutesHelper.handleSignUp(token).absoluteURL(IdentityProvider.sslEnabled)(request)"
+     <form action="@securesocial.controllers.routes.Registration.handleSignUp(token).absoluteURL(IdentityProvider.sslEnabled)(request)"
           class="form-horizontal"
           autocomplete= "off"
           method="POST"
     >
         <fieldset>
-                         <div class="verticalcenter">
-	<a href="index.htm"><img src="@routes.Assets.at("images/LASU-logo-black.png")" alt="LASU" class="brand" /></a>
-	<div class="panel panel-primary">
-		<div class="panel-body">
-                      
-                
+          @CSRF.formField(play.filters.csrf.CSRF.Token.getToken(request))
           <div style="margin-left: 20px;">
             <div class="information">
               <p>Almost there.  Please provide the following information to complete your registration</p>
@@ -25,8 +20,8 @@
             @if( UsernamePasswordProvider.withUserNameSupport ) {
             <div class="form-group
                 @if(signUpForm("userName").hasErrors) { has-error }">
-                <label class="col-sm-6 col-md-3 control-label" for="userName">@Messages("securesocial.signup.userName")</label>
-                <div class="col-sm-6 col-md-3 ">
+                <label class="col-sm-3 control-label" for="userName">@Messages("securesocial.signup.userName")</label>
+                <div class="col-sm-6 ">
                     <input type="text" class="form-control" value="@signUpForm("userName").value" name="userName" placeholder="">
                     <p class="help-inline">
                         <small>Required</small>
@@ -37,7 +32,7 @@
 
             <div class="form-group
                 @if(signUpForm("firstName").hasErrors) { has-error }">
-                <label class="col-sm-6 col-md-3  control-label" for="firstName">@Messages("securesocial.signup.firstName")</label>
+                <label class="col-sm-3 control-label" for="firstName">@Messages("securesocial.signup.firstName")</label>
                 <div class="col-sm-6">
                     <input type="text" class="form-control" value="@signUpForm("firstName").value" name="firstName" placeholder="">
                     <p class="help-inline">
@@ -48,7 +43,7 @@
 
             <div class="form-group
                 @if(signUpForm("lastName").hasErrors) { has-error }">
-                <label class="col-sm-6 col-md-3  control-label" for="lastName">@Messages("securesocial.signup.lastName")</label>
+                <label class="col-sm-3 control-label" for="lastName">@Messages("securesocial.signup.lastName")</label>
                 <div class="col-sm-6">
                     <input type="text" class="form-control" value="@signUpForm("lastName").value" name="lastName" placeholder="">
                     <p class="help-inline">
@@ -59,7 +54,7 @@
 
             <div class="form-group
                 @if(signUpForm("password.password1").hasErrors) { has-error }">
-                <label class="col-sm-6 col-md-3  control-label" for="password.password1">@Messages("securesocial.signup.password1")</label>
+                <label class="col-sm-3 control-label" for="password.password1">@Messages("securesocial.signup.password1")</label>
                 <div class="col-sm-6">
                     <input type="password" class="form-control" value="@signUpForm("password.password1").value" name="password.password1" placeholder="">
                     <p class="help-inline">
@@ -74,7 +69,7 @@
             
             <div class="form-group
                 @if(signUpForm("password.password2").hasErrors) { has-error }">
-                <label class="col-sm-6 col-md-3  control-label" for="password.password2">@Messages("securesocial.signup.password2")</label>
+                <label class="col-sm-3 control-label" for="password.password2">@Messages("securesocial.signup.password2")</label>
                 <div class="col-sm-6">
                     <input type="password" class="form-control" value="@signUpForm("password.password2").value" name="password.password2" placeholder="">
                     <p class="help-inline">
@@ -89,11 +84,9 @@
             
             <div class="col-sm-offset-5 form-actions">
                 <button type="submit" class="btn btn-primary">@Messages("securesocial.signup.createAccount")</button>
-                <a class="btn btn-default" href="@securesocial.core.providers.utils.RoutesHelper.login()">@Messages("securesocial.signup.cancel")</a>
+                <a class="btn btn-default" href="@env.routes.loginPageUrl(request)">@Messages("securesocial.signup.cancel")</a>
             </div>
-            </div>
-            </div>
-            </div>
+            
         </fieldset>
     </form>
 

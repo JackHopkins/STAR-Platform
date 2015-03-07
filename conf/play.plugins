@@ -1,14 +1,2 @@
-#1500:com.typesafe.plugin.CommonsMailerPlugin
-
-
-#550:com.typesafe.plugin.RedisPlugin
+1500:com.typesafe.plugin.CommonsMailerPlugin
 5000:com.github.mumoshu.play2.memcached.MemcachedPlugin
-9994:securesocial.core.DefaultAuthenticatorStore
-9995:securesocial.core.DefaultIdGenerator
-9996:securesocial.core.providers.utils.DefaultPasswordValidator
-9997:controllers.SecureSocialTemplatesPlugin
-9998:models.users.UserService
-9999:securesocial.core.providers.utils.BCryptPasswordHasher
-#10001:securesocial.core.providers.FacebookProvider
-#10002:securesocial.core.providers.GoogleProvider
-10004:securesocial.core.providers.UsernamePasswordProvider

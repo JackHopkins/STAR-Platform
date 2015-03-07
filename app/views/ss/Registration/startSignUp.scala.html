@@ -1,71 +1,55 @@
-@(request: play.api.mvc.RequestHeader, startForm:play.api.data.Form[String])
+@(startForm:play.api.data.Form[String])(implicit request: play.api.mvc.RequestHeader, env: securesocial.core.RuntimeEnvironment[_])
 @import helper._
-@import securesocial.core.IdentityProvider
-@import securesocial.core.Registry
+@implicitFieldConstructor = @{ FieldConstructor(securesocial.views.html.inputFieldConstructor.f) }
 @import securesocial.core.providers.UsernamePasswordProvider.UsernamePassword
 
-@implicitFieldConstructor = @{ FieldConstructor(views.html.ss.inputFieldConstructor.f) }
+@ss.secure_formWrapper(request, "Turnbulls - signup", Messages("securesocial.signup.title") ) {
 
-@ss.secure_formWrapper(request, "disscout - signup", Messages("securesocial.signup.title") ) {
+@defining( env.providers.values.filter( _.id != UsernamePassword) ) { externalProviders =>
 
-    @defining( Registry.providers.all.values.filter( _.id != UsernamePassword) ) { externalProviders =>
-            @if( externalProviders.size > 0 ) {
-                <div class="clearfix">
-                    <div class="information">
-                        <p>@Messages("securesocial.login.instructions")</p>
-                    </div>
-                    <div style="margin-left: 20px;">
-                        @for(p <- externalProviders) {
-                            @ss.provider(request, p.id)
-                        }
-                        </p>
-                    </div>
-                </div>
-            }
-    }
-
+  @if(Common.isDev() == false) {
+        @if( externalProviders.size > 0 ) {
+            <div class="clearfix">
+                <p>@Messages("securesocial.login.instructions")</p>
+                <p>
+                    @for(p <- externalProviders) {
+                        @ss.provider(p.id)(request, env)
+                    }
+                </p>
+            </div>
+        }
+   }
+}
     <div class="information">
-        <p>@Messages("")</p>
+        <p>@Messages("disscout.signup.narrative")</p>
     </div>
-    <form action="@securesocial.core.providers.utils.RoutesHelper.handleStartSignUp().absoluteURL(IdentityProvider.sslEnabled)(request)"
+    <form action="@env.routes.handleStartSignUpUrl(request)"
           class="form-horizontal"
           autocomplete="off" method="post"
     >
     
         <fieldset>
-                         <div class="verticalcenter">
-	<a href="index.htm"><img src="@routes.Assets.at("images/LASU-logo-black.png")" alt="LASU" class="brand" /></a>
-	<div class="panel panel-primary">
-		<div class="panel-body">
-                      
-                
+            @CSRF.formField(play.filters.csrf.CSRF.Token.getToken(request))
             <div class="row">
                 <div class="form-group">
-                    <!--<label class="col-xs-12 col-sm-3 col-md-3 control-label" for="email">@Messages("securesocial.signup.email1")</label>-->
-                    <div class="col-sm-12">
+                    <label class="col-xs-12 col-sm-3 control-label" for="email">@Messages("securesocial.signup.email1")</label>
+                    <div class="col-xs-12 col-sm-6">
                         <div class="input-group input-group-lg">
                             <span class="input-group-addon">
-                                <span class="fa fa-envelope"></span>
+                                <span class="fa fa-user"></span>
                             </span>
-                            <input type="email" class="form-control" name="email" value="" placeholder="Enter your Email Address">
+                            <input type="email" class="form-control" name="email" value="">
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-12">
+                <div class="col-xs-offset-5">
                     <div class="form-actions">
-                    <div class="pull-right">
                         <button type="submit" class="btn btn-primary">@Messages("securesocial.signup.createAccount")</button>
-                        </div>
-                        <div class="pull-right">
-                        <a class="btn btn-default" href="@securesocial.core.providers.utils.RoutesHelper.login()">@Messages("securesocial.signup.cancel")</a>
-                        </div>
+                        <a class="btn" href="@env.routes.loginPageUrl(request)">@Messages("securesocial.signup.cancel")</a>
                     </div>
                 </div>
-            </div>
-            </div>
-            </div>
             </div>
         </fieldset>
     </form>

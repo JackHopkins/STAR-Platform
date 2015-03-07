@@ -1,13 +1,12 @@
-@(request: play.api.mvc.RequestHeader)
+@()(implicit request: RequestHeader)
 
-@mails.email("disscout") {
-  @mails.emailFormWrapper("disscout - unknown email") {
+@mails.email("Turnbulls MIS") {
+  @mails.emailFormWrapper("Turnbulls MIS - unknown email") {
 
       <p>Hello,</p>
 
       <p>We received a request to reset a password in our system.  The attempt has failed because we do not have
-      a registered account with this email address. It could be that you logged in using an external account such as Google
-      or Facebook.</p>
+      a registered account with this email address.</p>
 
       <p>
       If you haven't created an account with us ignore this email, otherwise if you think you have an account with us contact

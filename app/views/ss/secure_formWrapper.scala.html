@@ -1,8 +1,16 @@
-@(request: play.api.mvc.RequestHeader, pageTitle: String = "lasu.com", title: String)(content: Html)
+@(request: play.api.mvc.RequestHeader, pageTitle: String = "disscout.com", title: String)(content: Html)
 
 @secure_main(request, pageTitle) {
 
-  @formContent(title, content)
-  
+<div class="form-body">
+@**  <div style="form-title-border"></div> **@
+  <div class="form-title-bar">
+      @title
+  </div>
+  <div class="form-contents">
+    @content
+  </div>
+</div>
+
 }
 

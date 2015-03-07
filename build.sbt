@@ -16,23 +16,18 @@ libraryDependencies ++= Seq(
   "com.google.guava" % "guava" % "14.0",
    "ws.securesocial" %% "securesocial" % "master-SNAPSHOT",
   "se.digiplant" %% "play-res" % "1.1.1",
-"com.github.mumoshu" %% "play2-memcached" % "0.6.0"
+"com.github.mumoshu" %% "play2-memcached" % "0.6.0",
+  "redis.clients" % "jedis" % "2.6.2"
 )     
 
 
-resolvers += "Objectify Play Repository" at "http://schaloner.github.com/releases/"
-
-resolvers += "Objectify Play Snapshot Repository" at "http://schaloner.github.com/snapshots/"
-
-resolvers += Resolver.sonatypeRepo("snapshots")
-
-resolvers += "Sedis repository" at "http://pk11-scratch.googlecode.com/svn/trunk/"
-
-//resolvers += "Spy Repository" at "http://files.couchbase.com/maven2"
-
-resolvers += "sbt-plugin-snapshots" at "http://repo.scala-sbt.org/scalasbt/sbt-plugin-snapshots/"
-
-resolvers += "Spy Repository" at "http://files.couchbase.com/maven2"
+resolvers ++= Seq(
+Resolver.sonatypeRepo("snapshots"),
+Resolver.sonatypeRepo("master"),
+"Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
+"Online Play Repository" at "http://repo.typesafe.com/typesafe/simple/maven-releases/",
+"Spy Repository" at "http://files.couchbase.com/maven2",
+"Morphia Repo" at "http://morphia.googlecode.com/svn/mavenrepo/" )
 
 
 
