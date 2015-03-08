@@ -1,4 +1,4 @@
-package models.users;
+package models;
 
 
 import java.util.ArrayList;
@@ -28,8 +28,6 @@ import securesocial.core.OAuth2Info;
 import securesocial.core.PasswordInfo;
 import service.UserCredential;
 import utils.BCrypt;
-import models.users.CompleteProfileConsumer;
-import models.users.CompleteProfileRetailer;
 import models.users.UserType;
 
 import persistence.MongoDBManager;

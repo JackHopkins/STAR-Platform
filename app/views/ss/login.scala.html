@@ -1,4 +1,4 @@
-@(loginForm: play.api.data.Form[(String,String)], errorMsg: Option[String] = None)(implicit request: RequestHeader,env:securesocial.core.RuntimeEnvironment[_])
+@(loginForm: play.api.data.Form[(String,String)], errorMsg: Option[String] = None)(implicit request: play.api.mvc.RequestHeader,env:securesocial.core.RuntimeEnvironment[_])
 
 @import securesocial.core.providers.UsernamePasswordProvider.UsernamePassword
 

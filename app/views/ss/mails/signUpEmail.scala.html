@@ -1,4 +1,4 @@
-@(token: String)(implicit request: RequestHeader)
+@(token: String)(implicit request: play.api.mvc.RequestHeader)
 @import securesocial.core.IdentityProvider
 
 @mails.email(Messages("mails.sendSignUpEmail.title")) {

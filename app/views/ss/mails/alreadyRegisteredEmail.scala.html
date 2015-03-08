@@ -1,4 +1,4 @@
-@(user: securesocial.core.BasicProfile)(implicit request: RequestHeader,env: securesocial.core.RuntimeEnvironment[_])
+@(user: securesocial.core.BasicProfile)(implicit request: play.api.mvc.RequestHeader,env: securesocial.core.RuntimeEnvironment[_])
 
 @mails.email("Turnbulls MIS") {
     @mails.emailFormWrapper("You're Already Registered") {
