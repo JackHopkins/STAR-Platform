@@ -28,8 +28,8 @@ import securesocial.core.OAuth2Info;
 import securesocial.core.PasswordInfo;
 import service.UserCredential;
 import utils.BCrypt;
+import models.track.Track;
 import models.users.UserType;
-
 import persistence.MongoDBManager;
 import play.data.validation.Constraints.Required;
 
@@ -369,12 +369,35 @@ public class User {
     }
 
     public static void save(UserCredential userCredential) {
-		String email = userCredential.main.email().get();
+    	String email = userCredential.main.email().get();
     	User user = User.findByEmail(email);
     	if (null != user) {
     		if (userCredential.main.avatarUrl().isDefined())
     			user.avatarUrl = userCredential.main.avatarUrl().get();
+    		MongoDBManager.getInstance().dataStore.delete(user);
+    	}else{
+    		user = new User();
+    		
+    		user.authMethod = userCredential.main.authMethod().method();
+    		if (userCredential.main.avatarUrl().isDefined())
+    		user.avatarUrl = userCredential.main.avatarUrl().get();
+    		user.email = userCredential.main.email().get();
+    			
+    				user.firstName = userCredential.main.firstName().get();
+    				user.name = userCredential.main.fullName().get();
+    				
+    				//Maybe wrong?
+    				user.profileComplete = false;
+    				user.providerId = userCredential.main.providerId();
+    				user.userId = userCredential.main.userId();
+    				user.track = new Track();
+    				
+    				user.password = userCredential.main.passwordInfo().get().password();
+    			
+    				
     	}
+    	MongoDBManager.getInstance().dataStore.save(user);
+    	
 	}
 
 
