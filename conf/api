@@ -1,0 +1,41 @@
+#Handles the uploading of new jar plugin files
+POST		/v1/upload					controllers.UploadController.upload()
+#Sample Request
+{
+
+}
+
+#Implemented to allow browsers to receive communications from agents.
+GET 		/v1/:container/:agent 		controllers.Agent.get(container, agent)
+#Sample Request
+{
+
+}
+
+#Posts an ACL message to an agent
+POST 		/v1/:container/:agent		controllers.Agent.post(container, agent)
+#Sample Request
+{
+
+}
+
+#Adds an entity to a container. If the container doesn't exist, it is spawned.
+POST 		/v1/:container		  		controllers.Container.post(container)
+#Sample Request
+{
+
+}
+
+#Deletes an entity from a container.
+DELETE  	/v1/:container 				controllers.Container.delete(container)
+#Sample Request
+{
+
+}
+
+#Assigns a container to an application.
+PUT			/v1/:container				controllers.Container.put(container)
+#Sample Request
+{
+
+}

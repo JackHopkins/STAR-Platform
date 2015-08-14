@@ -13,6 +13,7 @@ doc in Compile <<= target.map(_ / "none")
 // exposing the play ports
 //dockerExposedPorts in Docker := Seq(9000)
 
+
 libraryDependencies ++= Seq(
   javaCore,
   javaJdbc,
@@ -41,9 +42,17 @@ libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-email" % "1.1.3",
   "org.mongodb.morphia" % "morphia" % "0.107",
   "org.mongodb" % "mongo-java-driver" % "2.12.2",
-  "org.mongodb" % "bson" % "2.13.0"
+  "org.mongodb" % "bson" % "2.13.0",
+  "com.esotericsoftware.yamlbeans" % "yamlbeans" % "1.08",
+   "org.rythmengine" % "rythm-engine" % "1.1.1-SNAPSHOT",
+   "net.sf.opencsv" % "opencsv" % "2.3",
+    "it.unibo.alice.tuprolog" % "tuprolog" % "2.1.1",
+    "org.xerial" % "sqlite-jdbc" % "3.8.10.1",
+    "org.avaje.ebeanorm" % "avaje-ebeanorm-agent" % "4.5.3",
+    "org.avaje" % "avaje-agentloader" % "1.1.2"
 )     
 
+TwirlKeys.templateImports += "se.digiplant._"
 
 resolvers ++= Seq(
 Resolver.sonatypeRepo("snapshots"),

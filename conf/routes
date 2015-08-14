@@ -5,8 +5,42 @@
 # Home page
 GET     /                           controllers.Application.index()
 
+
+#API
+
+GET		/test							controllers.Application.test()
+GET		/containers						controllers.Application.containers()
+
+#Handles the uploading of new jar plugin files
+POST		/v1/upload/agent			controllers.UploadController.uploadAgent()
+POST		/v1/upload/physics			controllers.UploadController.uploadPhysics()
+
+
+#Spawns a container. Physics can be defined with the "physics" parameter.
+#Relevant applications can be defined with the "applications" parameter.
+POST 		/v1/:container		  		controllers.Container.post(container)
+#Kills a container.
+DELETE		/v1/:container				controllers.Container.delete(container)
+#Puts an event in this container 
+PUT			/v1/:container				controllers.Container.put(container)
+#Gets JSON information regarding running containers
+GET			/v1/container				controllers.Container.get()
+
+
+#Implemented to allow browsers to receive communications from agents.
+GET 		/v1/:container/:agent 		controllers.Agent.get(container, agent)
+#Posts a message to an agent
+PUT 		/v1/:container/:agent		controllers.Agent.put(container, agent)
+#Deletes an agent
+DELETE  	/v1/:container/:agent 		controllers.Agent.delete(container, agent)
+#Adds an entity to a container.
+POST		/v1/:container/:agent		controllers.Agent.post(container, agent)
+
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     	/assets/*file               controllers.Assets.at(path="/public", file)
+
+GET    		/resources/:file      		se.digiplant.res.ResAssets.at(file)
+
 
 # User Registration and password handling 
 ->         /auth                securesocial.Routes

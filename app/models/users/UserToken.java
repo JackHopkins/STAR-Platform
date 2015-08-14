@@ -5,7 +5,6 @@ import java.util.Iterator;
 
 import org.joda.time.DateTime;
 
-import persistence.MongoDBManager;
 import securesocial.core.java.Token;
 
 import org.mongodb.morphia.Key;
@@ -52,14 +51,14 @@ public class UserToken {
 		userToken.isSignUp = token.isSignUp;
 		userToken.email = token.email;
 		userToken.uuid = token.uuid;
-		MongoDBManager.getInstance().dataStore.save(userToken);
+	//	MongoDBManager.getInstance().dataStore.save(userToken);
 	}
 
 	public void delete() {
-		MongoDBManager.getInstance().dataStore.delete(this);
+		//MongoDBManager.getInstance().dataStore.delete(this);
 	}
 
 	public static UserToken findbyId(String tokenId) {
-		return MongoDBManager.getInstance().dataStore.get(UserToken.class, tokenId);
+		return null;//MongoDBManager.getInstance().dataStore.get(UserToken.class, tokenId);
 	}
 }

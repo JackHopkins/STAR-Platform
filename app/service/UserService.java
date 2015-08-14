@@ -16,7 +16,6 @@
  */
 package service;
 
-import persistence.MongoDBManager;
 import play.Logger;
 import play.libs.F;
 import securesocial.core.BasicProfile;
@@ -24,16 +23,20 @@ import securesocial.core.PasswordInfo;
 import securesocial.core.services.SaveMode;
 import securesocial.core.java.BaseUserService;
 import securesocial.core.java.Token;
+
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
+
 import com.mongodb.Mongo;
 import com.mongodb.MongoURI;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
 
-import models.User;
+import models.users.User;
 import models.users.UserToken;
 
 /**
@@ -146,7 +149,7 @@ public class UserService extends BaseUserService<UserCredential> {
 
     @Override
     public void doDeleteExpiredTokens() {
-        List<UserToken> list = MongoDBManager.getInstance().dataStore.createQuery(UserToken.class).filter("expireAt", "< "+System.currentTimeMillis()).asList();//UserToken.find.where().lt("expireAt", new DateTime().toString()).findList();
+        List<UserToken> list = new ArrayList<UserToken>();//MongoDBManager.getInstance().dataStore.createQuery(UserToken.class).filter("expireAt", "< "+System.currentTimeMillis()).asList();//UserToken.find.where().lt("expireAt", new DateTime().toString()).findList();
         for (UserToken UserToken : list) {
             UserToken.delete();
         }

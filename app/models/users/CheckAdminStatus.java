@@ -1,6 +1,5 @@
 package models.users;
 
-import models.User;
 import securesocial.core.java.Authorization;
 import service.UserCredential;
 
