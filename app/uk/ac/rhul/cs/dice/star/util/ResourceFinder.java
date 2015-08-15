@@ -36,7 +36,7 @@ import com.google.common.io.ByteStreams;
 
 public class ResourceFinder {
 
-	private final String container;
+	//private final String container;
 
 	private static final char DOT = '.';
 
@@ -47,11 +47,11 @@ public class ResourceFinder {
 
 	private static final String BAD_PACKAGE_ERROR = "Unable to get resources from path '%s'. Are you sure the package '%s' exists?";
 
-	public ResourceFinder(String container) {
+	/*public ResourceFinder(String container) {
 		this.container = container;
-	}
+	}*/
 
-	public Resource findPublicResource(String path, String name) {
+	public static Resource findPublicResource(String path, String name) {
 		/*StringBuilder builder = new StringBuilder();
 		try {
 			builder.append(IOUtils.toString(Play.classloader(Play.current()).getResourceAsStream(path), "UTF-8"));
@@ -64,7 +64,7 @@ public class ResourceFinder {
 		//controllers.routes.Application.hello("Bob")
 		//return controllers.routes.Assets.at(container+"/"+name	);
 	}
-	public Map<String, ResourceDB> findResources(String scannedPackage) {
+	public static Map<String, ResourceDB> findResources(String scannedPackage) {
 		/*String scannedPath = scannedPackage.replace(DOT, SLASH);
 		URL scannedUrl = Thread.currentThread().getContextClassLoader().getResource(scannedPath);
 		if (scannedUrl == null) {
@@ -81,7 +81,7 @@ public class ResourceFinder {
 		return resources;
 	}
 
-	private Map<String, ResourceDB> findResources(File file, String scannedPackage) {
+	private static Map<String, ResourceDB> findResources(File file, String scannedPackage) {
 		Map<String, ResourceDB> views = new HashMap<String, ResourceDB>();
 		String resource = scannedPackage + DOT + file.getName();
 		if (file.isDirectory()) {
@@ -102,7 +102,7 @@ public class ResourceFinder {
 		return views;
 	}
 
-	public ResourceDB getResourceFromFile(File file) throws IOException {
+	public static ResourceDB getResourceFromFile(File file) throws IOException {
 		final InputStream input = new FileInputStream(file);//getClass().getClassLoader().getResourceAsStream(classAsPath);
 
 		String[] bits = file.getName().split("/");
