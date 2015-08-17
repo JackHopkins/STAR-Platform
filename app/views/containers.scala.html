@@ -48,7 +48,7 @@
 
 </head>
 
-<body>
+<body ng-controller="AppCtrl">
 
 	<!-- Fixed navbar -->
 	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -65,8 +65,8 @@
 			</div>
 			<div class="navbar-collapse collapse navbar-right">
 				<ul class="nav navbar-nav">
-					<li><a href="index.html">UPLOAD AGENT</a></li>
-					<li><a href="/test#about">UPLOAD PHYSICS</a></li>
+					<li><a href="#" ng-click="open(0)">UPLOAD AGENT</a></li>
+					<li><a href="#" ng-click="open(1)">UPLOAD PHYSICS</a></li>
 					<li><a href="/test#api">BACK</a></li>
 
 				</ul>
@@ -74,8 +74,24 @@
 			<!--/.nav-collapse -->
 		</div>
 	</div>
+	
 	<!-- /Fixed navbar -->
-	<div class="container2" ng-controller="AppCtrl" >
+	<div class="container2" >
+	
+	<script type="text/ng-template" id="upload.html">
+        <div class="modal-header">
+            <h3 class="modal-title">{{upload}}</h3>
+        </div>
+        <div class="modal-body">
+             <input type="file" file-model="myFile"/>
+    <button ng-click="uploadFile()">upload me</button>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+	
 		<div class="col-md-4 sidebar">
 		<!-- TREE CONTROL -->
 			<div id="showContainers">
@@ -94,13 +110,13 @@
 				<div class="form-group">
 					<input type="text" ng-model="containerName" class="form-control half">
 					<select class="form-control half" ng-model="physicsChoice" ng-options="f for name in physics"><option></option></select>
-					<button popover-placement="top" popover="On the Top!" type="button" class="btn btn-default">Create</button>
+					<button popover-placement="top" popover="On the Top!" type="button" class="btn btn-default">CREATE</button>
 				</div>
 			</div>
 		</div>
 
 		<div id="createAgent" class="col-md-8">
-			<h4>{{selectedNode.name}}</h4>
+			<h4>{{selectedNode.name}}</h4><a class="btn btn-default" ng-show="agentSelected"><i class="fa fa-sign-out"></i></a>
 			
 			<div ng-show="containerSelected" >
 			<table st-table="rowCollection" class="table table-striped">
@@ -136,8 +152,98 @@
 	(function(){
 var app = angular.module('star', [ 'ui.bootstrap', 'smart-table', 'treeControl' ]);
 
-app.controller('AppCtrl', function($scope, $http) {
+app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, items, fileUpload) {
+
+	 $scope.uploadFile = function(){
+	        var file = $scope.myFile;
+	        console.log('file is ' );
+	        console.dir(file);
+	        var uploadUrl = "/fileUpload";
+	        fileUpload.uploadFileToUrl(file, uploadUrl);
+	    };
+	    
+	  $scope.items = items;
+	  $scope.selected = {
+	    item: $scope.items[0]
+	  };
+
+	  $scope.ok = function () {
+	    $modalInstance.close($scope.selected.item);
+	  };
+
+	  $scope.cancel = function () {
+	    $modalInstance.dismiss('cancel');
+	  };
+	});
+app.directive('fileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
+            
+            element.bind('change', function(){
+                scope.$apply(function(){
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);
+
+app.service('fileUpload', ['$http', function ($http) {
+    this.uploadFileToUrl = function(file, uploadUrl){
+        var fd = new FormData();
+        fd.append('file', file);
+        $http.post(uploadUrl, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        })
+        .success(function(){
+            alert('g');
+        })
+        .error(function(){
+            alert('d');
+        });
+    }
+}]);
+
+app.controller('AppCtrl', function($scope, $http, $modal, $log) {
 	
+	 $scope.items = ['item1', 'item2', 'item3'];
+
+	  $scope.animationsEnabled = true;
+	  $scope.upload = "";
+	  $scope.open = function (type) {
+		  
+		if (type == 0) {
+			$scope.upload = "Agent";
+		}else{
+			$scope.upload = "Physics";
+		}
+	    var modalInstance = $modal.open({
+	      animation: $scope.animationsEnabled,
+	      templateUrl: 'upload.html',
+	      controller: 'ModalInstanceCtrl',
+	      size: 'sm',
+	      resolve: {
+	        items: function () {
+	          return $scope.items;
+	        }
+	      }
+	    });
+
+	    modalInstance.result.then(function (selectedItem) {
+	      $scope.selected = selectedItem;
+	    }, function () {
+	      $log.info('Modal dismissed at: ' + new Date());
+	    });
+	  };
+
+	  $scope.toggleAnimation = function () {
+	    $scope.animationsEnabled = !$scope.animationsEnabled;
+	  };
+	  
 	$scope.containerSelected = false;
 	$scope.agentSelected = false;
 	
@@ -193,12 +299,12 @@ app.controller('AppCtrl', function($scope, $http) {
       alert("Could not load container JSON data. This should never happen, as the data is served locally. Soz.")
     });
 	
-	$scope.agentFiles = [];
+	var agentFiles = [];
 	
 	$http.get('/v1/upload/agent').
     success(function(data, status, headers, config) {
     	$.each(data, function(i, item) {
-    	   $scope.dataForTheTree.push(item);
+    	   agentFiles.push(item);
     	});
     }).
     error(function(data, status, headers, config) {
@@ -208,7 +314,7 @@ app.controller('AppCtrl', function($scope, $http) {
 	$scope.containerName = "Name";
 	$scope.physicsChoice;
 	$scope.physics = [{name: 'Physics1'}];
-	$scope.rowCollection = [ {name: 'Agent1', uploaded : '7/3/2015'}];
+	$scope.rowCollection = agentFiles;// [ {name: 'Agent1', uploaded : '7/3/2015'}];
 });
 
 })();
