@@ -47,29 +47,12 @@ public class ResourceFinder {
 
 	private static final String BAD_PACKAGE_ERROR = "Unable to get resources from path '%s'. Are you sure the package '%s' exists?";
 
-	/*public ResourceFinder(String container) {
-		this.container = container;
-	}*/
-
 	public static Resource findPublicResource(String path, String name) {
-		/*StringBuilder builder = new StringBuilder();
-		try {
-			builder.append(IOUtils.toString(Play.classloader(Play.current()).getResourceAsStream(path), "UTF-8"));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}*/
 		System.out.println(controllers.routes.Assets.at(path).toString());
 		return new Resource(controllers.routes.Assets.at(path).toString(), name);
-		//controllers.routes.Application.hello("Bob")
-		//return controllers.routes.Assets.at(container+"/"+name	);
 	}
 	public static Map<String, ResourceDB> findResources(String scannedPackage) {
-		/*String scannedPath = scannedPackage.replace(DOT, SLASH);
-		URL scannedUrl = Thread.currentThread().getContextClassLoader().getResource(scannedPath);
-		if (scannedUrl == null) {
-			throw new IllegalArgumentException(String.format(BAD_PACKAGE_ERROR, scannedPath, scannedPackage));
-		}*/
+	
 		File scannedDir = Play.getFile(scannedPackage, Play.current());
 		if (scannedDir == null) return new HashMap<String, ResourceDB>();
 		if (scannedDir.listFiles() == null) return new HashMap<String, ResourceDB>();

@@ -11,10 +11,15 @@ GET     /                           controllers.Application.index()
 GET		/test							controllers.Application.test()
 GET		/containers						controllers.Application.containers()
 
-#Handles the uploading of new jar plugin files
+#Handles the uploading of new jar agent files
 POST		/v1/upload/agent			controllers.UploadController.uploadAgent()
-POST		/v1/upload/physics			controllers.UploadController.uploadPhysics()
+#Gets JSON information regarding uploaded agents
+GET			/v1/upload/agent			controllers.UploadController.getAgents()
 
+#Handles the uploading of new jar physics files
+POST		/v1/upload/physics			controllers.UploadController.uploadPhysics()
+#Gets JSON information regarding uploaded physics
+GET			/v1/upload/physics			controllers.UploadController.getPhysics()
 
 #Spawns a container. Physics can be defined with the "physics" parameter.
 #Relevant applications can be defined with the "applications" parameter.

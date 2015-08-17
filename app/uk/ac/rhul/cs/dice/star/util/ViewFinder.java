@@ -17,7 +17,7 @@ import uk.ac.rhul.cs.dice.star.entity.View;
 
 public class ViewFinder {
 
-	private final String appName;
+	//private final String appName;
 
 	private static final char DOT = '.';
 
@@ -29,11 +29,7 @@ public class ViewFinder {
 
 	private static final String BAD_PACKAGE_ERROR = "Unable to get views from path '%s'. Are you sure the package '%s' exists?";
 
-	public ViewFinder(String appName) {
-		this.appName = appName;
-	}
-
-	public View findPublicView(String path, String name) {
+	public static View findPublicView(String path, String name) {
 		StringBuilder builder = new StringBuilder();
 		try {
 			builder.append(IOUtils.toString(Play.classloader(Play.current()).getResourceAsStream(path), "UTF-8"));
@@ -43,7 +39,7 @@ public class ViewFinder {
 		}
 		return new View(name, builder);
 	}
-	public Map<String, View> findViews(String scannedPackage, String suffix) {
+	public static Map<String, View> findViews(String scannedPackage, String suffix) {
 	//	String scannedPath = scannedPackage.replace(DOT, SLASH);
 		//URL scannedUrl = Thread.currentThread().getContextClassLoader().getResource(scannedPath);
 		/*if (scannedUrl == null) {
@@ -70,7 +66,7 @@ public class ViewFinder {
 		return views;
 	}
 
-	private Map<String, View> findViews(File file, String scannedPackage, String suffix) {
+	private static Map<String, View> findViews(File file, String scannedPackage, String suffix) {
 		Map<String, View> views = new HashMap<String, View>();
 		String resource = scannedPackage + DOT + file.getName();
 		System.out.println(file.getName());
@@ -83,17 +79,17 @@ public class ViewFinder {
 			int endIndex = resource.length() - CLASS_SUFFIX.length();
 			String className = resource.substring(0, endIndex);
 			
-			try {
+			/*try {
 				views.put(className.substring(PREFIX.length()+appName.length()+1, className.length()), getViewFromFile(file, suffix));
 			} catch (IOException e) {
 				
 				e.printStackTrace();
-			}
+			}*/
 		}
 		return views;
 	}
 
-	public View getViewFromFile(File f, String suffix) throws IOException {
+	public static View getViewFromFile(File f, String suffix) throws IOException {
 		final InputStream input = new FileInputStream(f);
 		BufferedReader br = new BufferedReader(new InputStreamReader(input, "UTF-8"));
 		try {

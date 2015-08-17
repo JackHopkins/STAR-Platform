@@ -105,13 +105,12 @@ public class Global extends GlobalSettings
 							String path = "/assets/containers/"+container;
 							
 							Logger.info(path);
-							ResourceFinder resourceFinder = new ResourceFinder(container);
-							ViewFinder viewFinder = new ViewFinder(container);
+							
 							Map<String, Resource> resources = new HashMap<String, Resource>();
 							Map<String, View> views 		= new HashMap<String, View>();
 							
-							views.put("view", 		viewFinder.findPublicView("containers/"+container+"/view.rythm.html", "view"));
-							resources.put("star", 	resourceFinder.findPublicResource("containers/"+container+"/star.css", "star"));
+							views.put("view", 		ViewFinder.findPublicView("containers/"+container+"/view.rythm.html", "view"));
+							resources.put("star", 	ResourceFinder.findPublicResource("containers/"+container+"/star.css", "star"));
 							
 							Logger.info("Resources #: "+resources.size()+", Views #: "+views.size());
 							Logger.info("Resources: "+resources.keySet().toString());

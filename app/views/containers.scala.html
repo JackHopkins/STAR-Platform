@@ -1,7 +1,13 @@
 @()
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="star">
 <head>
+
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.js"></script>
+<script
+	src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.0.js"></script>
+<script src="assets/dashboard/js/smart-table.min.js"></script>
+
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,25 +17,35 @@
 
 <title>STAR - Simulation Testbed for Agent Research</title>
 
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="http://wix.github.io/angular-tree-control/angular-tree-control.js"></script>
+	
+	
 <!-- Bootstrap core CSS -->
 <link href="assets/css/bootstrap.css" rel="stylesheet">
 
 <!-- Custom styles for this template -->
 <link href="assets/css/style.css" rel="stylesheet">
+<link href="http://wix.github.io/angular-tree-control/css/tree-control.css" rel="stylesheet">
+<link href="assets/dashboard/css/dashboard.css" rel="stylesheet">
+
 <!-- <link href="assets/css/fontawesome.css" rel="stylesheet">-->
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 
-<!-- Just for debugging purposes. Don't actually copy this line! -->
-<!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
 
-<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-<!-- 
-<script src="assets/js/modernizr.js"></script>-->
-<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
+
+<style type="text/css">
+#main-container {
+	margin-top: 250px;
+}
+</style>
+
+
+<!--  <link
+	href="assets/dashboard/angular-treeview-master/css/angular.treeview.css"
+	rel="stylesheet">-->
+
 </head>
 
 <body>
@@ -44,24 +60,158 @@
 						class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="index.html"><i class="fa fa-star"></i> STAR.</a>
+				<a class="navbar-brand" href="index.html"><i class="fa fa-star"></i>
+					STAR.</a>
 			</div>
 			<div class="navbar-collapse collapse navbar-right">
 				<ul class="nav navbar-nav">
-					<li><a href="index.html">HOME</a></li>
-					<li><a href="/test#about">ABOUT</a></li>
-					<li><a href="/test#api">API</a></li>
-					<li class="active"><a href="/containers">CONTAINERS</a></li>
-					<li class="dropdown"><a href="/upload" class="dropdown-toggle"
-						data-toggle="dropdown">UPLOAD <b class="caret"></b></a>
-						<ul class="dropdown-menu">
-							<li><a href="/upload#agent">AGENT</a></li>
-							<li><a href="/upload#physics">PHYSICS</a></li>
-						</ul></li>
+					<li><a href="index.html">UPLOAD AGENT</a></li>
+					<li><a href="/test#about">UPLOAD PHYSICS</a></li>
+					<li><a href="/test#api">BACK</a></li>
+
 				</ul>
 			</div>
 			<!--/.nav-collapse -->
 		</div>
 	</div>
+	<!-- /Fixed navbar -->
+	<div class="container2" ng-controller="AppCtrl" >
+		<div class="col-md-4 sidebar">
+		<!-- TREE CONTROL -->
+			<div id="showContainers">
+				<h4>Running Containers</h4>
+			<treecontrol class="tree-classic"
+   tree-model="dataForTheTree"
+   options="treeOptions"
+   on-selection="showSelected(node)"
+   selected-node="node1">
+   {{node.name}}
+</treecontrol>
+
+			</div>
+
+			<div id="createContainer">
+				<div class="form-group">
+					<input type="text" ng-model="containerName" class="form-control half">
+					<select class="form-control half" ng-model="physicsChoice" ng-options="f for name in physics"><option></option></select>
+					<button popover-placement="top" popover="On the Top!" type="button" class="btn btn-default">Create</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="createAgent" class="col-md-8">
+			<h4>{{selectedNode.name}}</h4>
+			
+			<div ng-show="containerSelected" >
+			<table st-table="rowCollection" class="table table-striped">
+				<thead>
+					<tr>
+						<th>File Name</th>
+						<th>Uploaded</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="row in rowCollection">
+
+						<td>{{row.name}}</td>
+						<td>{{row.uploaded}}</td>
+
+						<td>
+							<button type="button" class="close" data-dismiss="alert"
+								aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</td>
+						
+					</tr>
+				</tbody>
+			</table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<script>
+	(function(){
+var app = angular.module('star', [ 'ui.bootstrap', 'smart-table', 'treeControl' ]);
+
+app.controller('AppCtrl', function($scope, $http) {
+	
+	$scope.containerSelected = false;
+	$scope.agentSelected = false;
+	
+	  $scope.showSelected = function(sel) {
+	     $scope.selectedNode = sel;
+	        
+	     switch (sel.type)
+	         {
+	         case "Agent":
+	         	$scope.agentSelected = true;
+	         	$scope.containerSelected = false;
+	         break;
+	        
+	         case "Entity": break;
+		         
+	         default:
+	        	$scope.containerSelected = true;
+        	 	$scope.agentSelected = false;
+	         }
+	     };
+	     
+	$scope.treeOptions = {
+		    nodeChildren: "children",
+		    dirSelectable: true,
+		    injectClasses: {
+		        ul: "a1",
+		        li: "a2",
+		        liSelected: "a7",
+		        iExpanded: "a3",
+		        iCollapsed: "a4",
+		        iLeaf: "a5",
+		        label: "a6",
+		        labelSelected: "a8"
+		    }
+		}
+	
+	$scope.dataForTheTree = [];
+	
+	$http.get('/v1/container').
+    success(function(data, status, headers, config) {
+    	$.each(data, function(i, item) {
+    		var container = {};
+    		var children = [];
+    		container.name = item.name;
+    		$.each(item.entities, function(i, child) {
+    			children.push({"name" : child.id, "type" : child.type});
+    		});
+    		container.children = children;
+    	   $scope.dataForTheTree.push(container);
+    	});
+    }).
+    error(function(data, status, headers, config) {
+      alert("Could not load container JSON data. This should never happen, as the data is served locally. Soz.")
+    });
+	
+	$scope.agentFiles = [];
+	
+	$http.get('/v1/upload/agent').
+    success(function(data, status, headers, config) {
+    	$.each(data, function(i, item) {
+    	   $scope.dataForTheTree.push(item);
+    	});
+    }).
+    error(function(data, status, headers, config) {
+      alert("Could not load agent file JSON data. This should never happen, as the data is served locally. Soz.")
+    });
+	
+	$scope.containerName = "Name";
+	$scope.physicsChoice;
+	$scope.physics = [{name: 'Physics1'}];
+	$scope.rowCollection = [ {name: 'Agent1', uploaded : '7/3/2015'}];
+});
+
+})();
+	</script>
 </body>
 </html>

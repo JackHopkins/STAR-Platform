@@ -48,15 +48,10 @@
 			<div class="navbar-collapse collapse navbar-right">
 				<ul class="nav navbar-nav">
 					<li class="active"><a href="index.html">HOME</a></li>
-					<li><a href="/test#about">ABOUT</a></li>
-					<li><a href="/test#api">API</a></li>
-					<li><a href="/containers">CONTAINERS</a></li>
-					<li class="dropdown"><a href="/upload" class="dropdown-toggle"
-						data-toggle="dropdown">UPLOAD <b class="caret"></b></a>
-						<ul class="dropdown-menu">
-							<li><a href="/containers#agent">AGENT</a></li>
-							<li><a href="/containers#physics">PHYSICS</a></li>
-						</ul></li>
+					<li><a href="#about">ABOUT</a></li>
+					<li><a href="#install">INSTRUCTIONS</a></li>
+					<li><a href="/containers">DASHBOARD</a></li>
+				
 				</ul>
 			</div>
 			<!--/.nav-collapse -->
@@ -215,6 +210,36 @@ Agents live in containers, and communicate with one another both synchronously (
 	</div>
 	<! --/twrap -->
 
+	<div id="api"></div>
+	<div id="cwrap">
+		<div class="container">
+			<div class="row centered">
+				<h3>Install</h3>
+				<div class="col-lg-4">
+					<!-- Windows8 icon by Icons8 -->
+					<img class="icon icons8-Windows8" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAABOUlEQVRoQ+1agQ2CMBA8JtANdAPdQNzA0VzBTRzBjTRv+qRpygOl2De5TwxRKbm73jVAv8N/1R7ACcAxfM4A5Le+c8hjFKyFtRURUfQAYFA0gOxLhd2ayCUBK2oL+Oq1loiA2olHg1cfAF4Rynd1xCMXnEMkBSvfNWzpZa8Ani2JiAWkVFkLrCVyUyI1p59E1mZJMsIZyahIa9FaQQFmZMQKzAgzwozYHmBGmBFmxHFG1trTxfg5j7ougE6BIJEphX79P+9+efe7kedoLVqL1rIVYEaYEWaEGSnyAF8+FMkWDeLy63H5zW3aa/fB0hlvmhELbNrzoaR1Fzgd65aIRVK7GPQopO+eGwaW2is+/xa1cOjevfSgVK9Wb1HUonE+S3P5FaUVkTmWzeVT+l6y5ZHIlO3iNpMhnx/ti3nmkOeMdwAAAABJRU5ErkJggg==" width="70" height="70">
+					<div class="hline"></div>
+				</div>
+				<div class="col-lg-4">
+				
+					<!-- Linux icon by Icons8 -->
+					<img class="icon icons8-Linux" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAEzElEQVRoQ83Zj7FWNRAF8KUCoQKlAqUCtQKlArUCoQK1ArQCpQKkAqQCsAKgAqACmN9Mlgl597s3yc2beZlhPt79k+zZPWd3k3srrmfcjogfIuK7iPiqLPEyIv6LiKfXseSta5j0UUQ82Jn3dUT8UkAtW341kBcR8c2OdW8iQrS+KGD+WYVkJRBREI298X2h2t/loXsRgXKnx0ogR9FgLFqlZvxNM8CdHquAoMvbSWuWRGUVENnpWQXkfdFBi+1dRLj3ZXXjj4j4fdIJn15bDYSYCTjTbhr8uFy3MKPRK+89L8+fwrIaCL7jParRg+zUGtpG78YCkb143e9PEYE6oiQZ/FXuyVRflxDcSCCM/rUYLDK8n7+/RQSNiNqfEfHtTQaiYjOSx+kAtbQk9AAUobsuMWTh9KzMdWqs0kimX0BEhLGutePfiCB81Etqeea0HacnqCylA8YdtSjoBRCq5bhfrk1HZSUQXv6x8XQahlKAfihJgOhFLoco/TyNYkVIq8VxnbFoRQ+i838R+6tCJ3QDwjPuE77o0NLdmwKEtxnWRgXVAJBmeV19ET3Uelj+fnK2G15FrSxyWRAZzFjZCgCZjOdz1AUzrwE4HZVVQLLzHWkAMyo1o6b7rhVA0qBRI+iEdtox4oxP754FQg/4rVms9xm9uq1blXzHNRSVprvHGSAMRyl8H41GGkhLuVusjZb9FNfucQaINoPIDV5U1Ah2ZGyJPt/PxNE13yyQ1pOoRSszhwne0SW3mzFOoZcuis0A4UUi9a5CdrYqp+gZzCF1D9ZN2RkgmaXUB0bMiLylS0YFGN1Atvj+VlsOozIDxCFDeo4gZ+jUAlH9JQ4jHZRb4a6ojAJJbfAaiq2IRoLidVQ16qayq+KPAuG1O6WLtZjWY9Wwk0xK0Z0EkOOwSI4AyX5KNAjycPJBhHXLgl4JKiO0d548tDNLQSaQESf0YKqB2B47zc9xeEAxYgyR0wWh420Wwx4je56pgbTUOtRJL5A2qzDsuoAojFr+WiPW27W1F4hI4GgevgGxy9meEDTP5FmYNWQvSSWLIzrvnQUMaURzJ/1aSF91WKQGwBC2SABTa8NarvvdzZC9EWk3QSZWDEXq7PeNbD4JWkKpu+HcXYqMwnhx9ABpz2pzMnVEVIDyb3bY6xuMpo38WIRO9ju5VdCqXOyuLwHhaV5AJZNtHbZZHMWEfLbzNUcC8X+6kxVziE6uPQxkay99ydto5SQEPYY3Q2XSGsheVK1zUSdbEalbhR664K6eS7qcAdMLJA/ANzW5AkgukGmzR3e1g3qBeMdaInOl495aNFuRnmjkM0AQ/0h9Se7PfHu8EvktICMaqcHucrjxiuJGyKmvEad59sqpzQpq1UYcdcSi4PCas6RX4t06RdkDpkCK/Gda2QJiPz67YcrmTqVmaH7s8SuNMyAppTHE+fpU/igy+enuSlexBYQx9efjo8nb+45x6k/Vl96X7QCr9x2Xnq0PwDef2QKCv23PMwIGEO8fGdgDJPuvw53oUarkMf+A85t76j1gKrDn2/DjtGt1+69zaNv1nJug0bGrlzsC0hrMwGxbWvrxnoVH+q5LfRx9udfdYY8CqYGleNP76NTlvcY75uGcTAIaR3WiG4T5PgJK/x1C/miFbwAAAABJRU5ErkJggg==" width="70" height="70">
+					<div class="hline"></div>
+				</div>
+				<div class="col-lg-4">
+				
+					<!-- Mac OS icon by Icons8 -->
+<img class="icon icons8-Mac-OS" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAC50lEQVRoQ+2ajVEUQRCFHxEIESgRIBGIEUgGQARoBEgEagRqBEoEQARABEAEagRYH7VjDXM9Pzu7zM5V2VVXd3V329tvXv/O7IaWl1eSdiTdSLqrNWej9sIZrjuQdChpb9D1VtJFrd4lgMDAVw+As32tgLyWdC5p01j5LUm/14GRFIh7STBVLa1cCwauEsaeSvpYjUJSKyAYeZIwdHtKxkJvCyCwcRuJC2yYzEYrIKRYspQl1A5iZ7K0YOSbJGpGKICghlRnKl9hCyAUuTcBii9DcM8CopVr+UC+S4Kh6goe88EaRvBpXIV3117QI/G6loSxvDtxMeB/x2/UjXeS9ofPro7wP3T9lHRW6npjgGDQJ6O1sBYJl8EQXpeeMRiLm70vDHL0fB4yWzIhlAI5HhROzi6VCmDpKGD6iaoSIKROUujSAjs0lqGLPtqVAwKtsNGLRMGkgBCEP3pBMNhB8OMdK2k7BiTXViyB70MqTmNAck1eayDZfiwG5FeiyWsNgvTt6lX03hYQLmKK60WKWnwLSE+ZqoiNWPq1mryl2EkGuG+UxQgj6Swzwgzoi3dWLCAPMxgwl4pcwf53n/9A5lryjJ6ijBUL9p5ca1KMMNS8bLTiudswEjO7ZMWKkZ7SL4uKe2XFAtJbn8VAxZyfFAtIah8qp+85fqdlh5XkjosFhLmancGehKlwN2VQrOBwIadIPQk2kcVMZmJAemoc/cUk+ImZlX2xGJAe3csHtNIVp3qZntJw6OIrE+O6bT4A6M+wM/kkVnLdZU9V3rFiVvsckN7GXpONWNMY+mNPsRKdGHOMAKqXDJac30uAAGbp/guXYvyOPuJRCgQwS7pYtnEcA4RtVFbkReO+pWgmGQME+6EXZlqB4fSr6EhjLJAxYPBrQIfnGSwGR245KQZRmn6tG+JmNJbWsTPZhUEoNQxxPccWJJFwrOa5FMZbju2KpYYRXzkGUTRdRoGBsQ+P+YeqsFd14vsXQqaIMxonvwgAAAAASUVORK5CYII=" width="70" height="70">
+					<div class="hline"></div>
+				</div>
+			</div>
+			<! --/row -->
+		</div>
+		<! --/container -->
+	</div>
+	<! --/cwrap -->
+
+
 	<!-- *****************************************************************************************************************
 	 OUR CLIENTS
 	 ***************************************************************************************************************** -->
@@ -247,6 +272,8 @@ Agents live in containers, and communicate with one another both synchronously (
 		<! --/container -->
 	</div>
 	<! --/cwrap -->
+
+
 
 	<!-- *****************************************************************************************************************
 	 FOOTER

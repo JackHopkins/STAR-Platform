@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.JarFile;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import exceptions.PluginInstantiationException;
 import play.Logger;
 import play.Play;
@@ -24,6 +28,35 @@ import uk.ac.rhul.cs.dice.star.physics.Physics;
 public class UploadController extends Controller {
 
 	private final static String NAME = "name";
+	
+	public static Result getAgents() {
+		List<AgentWrapper> agents = AgentWrapper.getAgents();
+		JSONArray arr = new JSONArray();
+		for (AgentWrapper agent : agents) {
+			JSONObject pack = new JSONObject();
+			try {
+				pack.put("name",agent.getName());
+				pack.put("uploaded", agent.date.toLocaleString());
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return ok(arr.toString());
+	}
+	public static Result getPhysics() {
+		List<PhysicsWrapper> physics = PhysicsWrapper.getPhysicsList();
+		JSONArray arr = new JSONArray();
+		for (PhysicsWrapper physic : physics) {
+			JSONObject pack = new JSONObject();
+			try {
+				pack.put("name",physic.getName());
+				pack.put("uploaded", physic.date.toLocaleString());
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return ok(arr.toString());
+	}
 
 	public static Result uploadAgent() {
 		File file = request().body().asRaw().asFile();
@@ -51,7 +84,6 @@ public class UploadController extends Controller {
 	}
 
 	public static Result uploadPhysics() {
-		System.out.println("wrBG");
 		File file = request().body().asRaw().asFile();	
 
 		

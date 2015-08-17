@@ -8,6 +8,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import exceptions.ContainerNotFoundException;
 import models.GolemPlatform;
 import play.*;
@@ -17,7 +21,9 @@ import play.libs.F.Promise;
 import play.libs.Json;
 import play.mvc.*;
 import uk.ac.rhul.cs.dice.star.action.Event;
+import uk.ac.rhul.cs.dice.star.agent.AgentBody;
 import uk.ac.rhul.cs.dice.star.container.AbstractContainer;
+import uk.ac.rhul.cs.dice.star.entity.Entity;
 import uk.ac.rhul.cs.dice.star.persistence.models.PhysicsWrapper;
 import uk.ac.rhul.cs.dice.star.physics.Physics;
 import views.html.*;
@@ -27,7 +33,35 @@ public class Container extends Controller {
 	private static final String APPLICATIONS = "applications";
 	
 	public static Result get() {
-		return ok(Json.toJson(GolemPlatform.getInstance().getContainers()));
+		JSONArray containers = new JSONArray();
+		for (AbstractContainer container : GolemPlatform.getInstance().getContainers()) {
+			JSONObject obj = new JSONObject();
+			try {
+				obj.put("name", container.getName());
+				obj.put("physics", container.getGovernorClassName());
+				JSONArray arr = new JSONArray();
+				
+				for (String name : container.getEntityNames()) {
+					
+					JSONObject entity = new JSONObject();
+					Entity ent = container.getEntity(name);
+					entity.put("id", ent.getId());
+					
+					if (ent instanceof AgentBody) {
+					entity.put("type", "Agent");
+					}else{
+						entity.put("type", "Entity");
+					}
+					
+					arr.put(entity);
+				}
+				obj.put("entities", arr);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			containers.put(obj);
+		}
+		return ok(containers.toString());
 	}
     public static Result post(String container) {
     	Map<String, String[]> parameters = request().queryString();
