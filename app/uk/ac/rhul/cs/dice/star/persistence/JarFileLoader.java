@@ -21,9 +21,11 @@ import java.util.jar.JarFile;
 
 import org.apache.commons.io.IOUtils;
 
+import play.Logger;
 import play.api.Play;
 import uk.ac.rhul.cs.dice.star.persistence.Resource;
 import uk.ac.rhul.cs.dice.star.persistence.models.ResourceDB;
+import uk.ac.rhul.cs.dice.star.action.AbstractSensor;
 import uk.ac.rhul.cs.dice.star.entity.View;
 
 import com.google.common.io.ByteStreams;
@@ -51,9 +53,9 @@ public final class JarFileLoader extends ClassLoader {
 
 		Set<Class<?>> classes = new HashSet<Class<?>>();
 		
-		URL[] urls = { new URL("jar:file:" + path+"!/") };
-		URLClassLoader.newInstance(urls);
-
+		URL[] urls = { new URL("jar:file://" + path+"!/") };
+		URLClassLoader loader = URLClassLoader.newInstance(urls,Play.current().classloader());
+		
 		while (e.hasMoreElements()) {
 			JarEntry je = (JarEntry) e.nextElement();
 			
@@ -63,7 +65,12 @@ public final class JarFileLoader extends ClassLoader {
 			// -6 because of .class
 			String className = je.getName().substring(0,je.getName().length()-6);
 			className = className.replace('/', '.');
-			Class<?> c =  Play.current().classloader().loadClass(className);
+			
+			AbstractSensor sensor;
+			Class.forName(className, true, loader);
+			
+			Class<?> c =  loader.loadClass(className);//Play.current().classloader().loadClass(className);
+			Logger.debug("Loaded class with name: "+c.getName());
 			if (type.isAssignableFrom(c)) {
 				//This is the class we're looking for
 				classes.add(c);
