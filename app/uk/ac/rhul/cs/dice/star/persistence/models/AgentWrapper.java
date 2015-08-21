@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +16,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+
+import play.Logger;
 
 import com.avaje.ebean.Ebean;
 
@@ -25,6 +28,8 @@ import uk.ac.rhul.cs.dice.star.action.AbstractSensor;
 import uk.ac.rhul.cs.dice.star.agent.AbstractAgentBody;
 import uk.ac.rhul.cs.dice.star.agent.AbstractAgentBrain;
 import uk.ac.rhul.cs.dice.star.agent.AbstractAgentMind;
+import uk.ac.rhul.cs.dice.star.agent.DefaultAgentBody;
+import uk.ac.rhul.cs.dice.star.agent.DefaultAgentBrain;
 import uk.ac.rhul.cs.dice.star.container.Container;
 import uk.ac.rhul.cs.dice.star.entity.View;
 import uk.ac.rhul.cs.dice.star.persistence.JarFileLoader;
@@ -111,10 +116,35 @@ public class AgentWrapper extends Package{
 		Set<Class<?>> effectorClasses = loader.getByExtending(AbstractEffector.class);
 		
 		Set<Class<?>> sensorClasses = loader.getByExtending(AbstractSensor.class);
-		agentClass = (Class<? extends AbstractAgentBrain>) loader.getByExtending(AbstractAgentBrain.class).iterator().next();
-		bodyClass = (Class<? extends AbstractAgentBody>) loader.getByExtending(AbstractAgentBody.class).iterator().next();
-		mindClass = (Class<? extends AbstractAgentMind>) loader.getByExtending(AbstractAgentMind.class).iterator().next();
 		
+		
+		Iterator<Class<?>> brainIterator = loader.getByExtending(AbstractAgentBrain.class).iterator();
+		Iterator<Class<?>> bodyIterator = loader.getByExtending(AbstractAgentBody.class).iterator();
+		Iterator<Class<?>> mindIterator = loader.getByExtending(AbstractAgentMind.class).iterator();
+		
+		Logger.debug("Has brain: "+brainIterator.hasNext());
+		Logger.debug("Has body: "+bodyIterator.hasNext());
+		Logger.debug("Has mind: "+mindIterator.hasNext());
+		
+		if (brainIterator.hasNext()) {
+		agentClass = (Class<? extends AbstractAgentBrain>) brainIterator.next();
+		}else{
+			agentClass = DefaultAgentBrain.class;
+		}
+		
+		
+		if (bodyIterator.hasNext()) {
+		bodyClass = (Class<? extends AbstractAgentBody>) bodyIterator.next();
+		}else{
+			bodyClass = DefaultAgentBody.class;
+		}
+		
+		
+		if (mindIterator.hasNext()) {
+		mindClass = (Class<? extends AbstractAgentMind>) mindIterator.next();
+		}else{
+			throw new ClassNotFoundException("Could not find a mind for this agent.");
+		}
 		
 		final Map<String, View> views = 		loader.getWithFileType(".rythm.html");
 		//final Map<String, String> resources = loader
@@ -174,7 +204,7 @@ public class AgentWrapper extends Package{
 	}
 
 	public static List<AgentWrapper> getAgents() {
-		return new ArrayList<AgentWrapper>();//MongoDBManager.getInstance().dataStore.createQuery(AgentJARWrapper.class).field("uploader").equal(user).asList();
+		return find.findList();
 	}
 	public void save() {
 		
