@@ -11,9 +11,11 @@ import java.io.ObjectInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -24,6 +26,7 @@ import org.apache.commons.io.IOUtils;
 import play.Logger;
 import play.api.Play;
 import uk.ac.rhul.cs.dice.star.persistence.Resource;
+import uk.ac.rhul.cs.dice.star.persistence.models.AgentWrapper;
 import uk.ac.rhul.cs.dice.star.persistence.models.ResourceDB;
 import uk.ac.rhul.cs.dice.star.action.AbstractSensor;
 import uk.ac.rhul.cs.dice.star.entity.View;
@@ -47,6 +50,18 @@ public final class JarFileLoader extends ClassLoader {
 		resource.name = rDB.name;
 		
 		return resource;
+	}
+	public static Map<String, Resource> getResourceMap(List<ResourceDB> resourceList) {
+		Map<String, Resource> resources = new HashMap<String, Resource>();
+		
+		Logger.debug("Retrieving resource map: "+resourceList.size());
+		for (ResourceDB resource : resourceList) {
+			//ResourceDB resourceDB = resourceMap.get(key);
+			//Resource resource = JarFileLoader.getResource(resourceDB);
+			Logger.debug("Resource..."+JarFileLoader.getResource(resource).location);
+			resources.put(resource.name, JarFileLoader.getResource(resource));
+		};
+		return resources;
 	}
 	public Set<Class<?>> getByExtending(Class<?> type) throws MalformedURLException, ClassNotFoundException {
 		Enumeration<?> e = file.entries();
@@ -80,15 +95,16 @@ public final class JarFileLoader extends ClassLoader {
 		return classes;
 	}
 
-	public Map<String, ResourceDB> getAllResources() throws ClassNotFoundException, IOException {
+	public List<ResourceDB> getAllResources(AgentWrapper wrapper) throws ClassNotFoundException, IOException {
 
 		Enumeration<?> e = file.entries();
-		Map<String, ResourceDB> resources = new HashMap<String, ResourceDB>();
+		List<ResourceDB> resources = new ArrayList<ResourceDB>();
 		URL[] urls = { new URL("jar:file:" + path+"!/") };
 		URLClassLoader.newInstance(urls);
 
 		while (e.hasMoreElements()) {
 			JarEntry je = (JarEntry) e.nextElement();
+			
 			if(je.isDirectory() || je.getName().endsWith(".html") || je.getName().endsWith(".class")){
 				continue;
 			}
@@ -110,8 +126,8 @@ public final class JarFileLoader extends ClassLoader {
 				}*/
 			String[] bits = je.getName().split("/");
 			int parts = bits.length;
-			int fileTypeLength = bits[parts-1].length();
-			String className = je.getName().substring(je.getName().length()-fileTypeLength);
+			int fileTypeLength = bits[parts-1].split("\\.")[1].length()+1;
+			String className = je.getName().substring(0, je.getName().length()-fileTypeLength);
 			className = className.replace('/', '.');
 			
 				 final File tempFile = File.createTempFile(System.currentTimeMillis()+"", "");
@@ -121,12 +137,16 @@ public final class JarFileLoader extends ClassLoader {
 			        }
 			      String location = se.digiplant.res.Res.put(tempFile);
 			
+			      //Logger.debug("Classname: "+.className);
 			
 		//	byte[] bytes = ByteStreams.toByteArray(input);
 		//	Resource resource = new Resource(className, location);
 			//resource.load(name);
-			resources.put(className, new ResourceDB(se.digiplant.res.routes.ResAssets.at(location).toString(), className));
+			      Logger.debug("Element: "+className);
+					
+			resources.add(new ResourceDB(se.digiplant.res.routes.ResAssets.at(location).toString(), className, wrapper));
 		}
+	
 		return resources;
 	}
 	

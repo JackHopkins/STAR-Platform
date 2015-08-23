@@ -3,17 +3,20 @@ package models;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import exceptions.AgentNotFoundException;
 import exceptions.ContainerNotFoundException;
+import play.Logger;
 import play.libs.F.Function0;
 import play.libs.F.Promise;
 import play.mvc.Http.Request;
 import uk.ac.rhul.cs.dice.star.base.Base;
 import uk.ac.rhul.cs.dice.star.container.AbstractContainer;
 import uk.ac.rhul.cs.dice.star.container.Container;
+import uk.ac.rhul.cs.dice.star.container.ContainerIdFormer;
 import uk.ac.rhul.cs.dice.star.container.DefaultContainer;
 import uk.ac.rhul.cs.dice.star.http.ErrorCode;
 import uk.ac.rhul.cs.dice.star.http.HttpRequest;
@@ -138,9 +141,9 @@ public class GolemPlatform implements Platform {
 	 * @return
 	 */
 	public Promise<HttpResponse> routeRequest(HttpRequest request, String container, String agent) {
+		
 		AbstractContainer containerObj = getContainer(container);
 		if (containerObj == null) return error(ErrorCode.CONTAINER_BADREQUEST);
-
 				
 		return containerObj.route(request, agent);
 	}

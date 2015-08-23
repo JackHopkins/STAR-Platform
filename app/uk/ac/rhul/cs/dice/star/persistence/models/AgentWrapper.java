@@ -15,9 +15,11 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 import play.Logger;
+import akka.event.Logging.Debug;
 
 import com.avaje.ebean.Ebean;
 
@@ -38,8 +40,8 @@ import uk.ac.rhul.cs.dice.star.persistence.Resource;
 @Entity
 public class AgentWrapper extends Package{
 
-	@OneToMany(cascade = CascadeType.ALL)
-	Map<String, ResourceDB> resourceMap; 
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="agent")
+	public List<ResourceDB> resourceList; 
 	/*public AgentJARWrapper(String name, String uploader, PlatformType type) {
 		super(name, uploader, type);
 	}*/
@@ -58,13 +60,14 @@ public class AgentWrapper extends Package{
 		JarFileLoader loader;
 		try {	
 			loader = new JarFileLoader(this.getFile());
-			resourceMap = loader.getAllResources();
+			resourceList = loader.getAllResources(this);
 			
-			Class<?> clazz = loader.getByExtending(AbstractAgentMind.class).iterator().next();
+			Logger.debug("Creating resource map: "+resourceList.size());
+			/*Class<?> clazz = loader.getByExtending(AbstractAgentMind.class).iterator().next();
 		
 
-			this.setName(clazz.getName()+":"+(new Date()).toGMTString());
-			setFile(file);
+			this.setName(clazz.getName()+":"+(new Date()).toGMTString());*/
+			//setFile(file);
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -95,8 +98,9 @@ public class AgentWrapper extends Package{
 				JarFileLoader loader = new JarFileLoader(this.getFile());
 				loader.getByExtending(AbstractAgentBrain.class).isEmpty();
 				
-				AbstractAgentBody body = initialiseAgent(loader);
-				body.setEnvironment(containerObj);
+				AbstractAgentBody body = initialiseAgent(loader, containerObj);
+				body.setAgentId(this.getName()+"-"+containerObj.getEntityNames().size());
+			//	body.setEnvironment(containerObj);
 				containerObj.makePresent(body);
 				
 			} catch (ClassNotFoundException | IOException | IllegalArgumentException | SecurityException e) {
@@ -108,15 +112,15 @@ public class AgentWrapper extends Package{
 	}
 
 	@SuppressWarnings("unchecked")
-	private AbstractAgentBody initialiseAgent(JarFileLoader loader)
+	private AbstractAgentBody initialiseAgent(JarFileLoader loader, Container containerObj)
 			throws MalformedURLException, ClassNotFoundException, Exception {
+		
 		Class<? extends AbstractAgentBrain> agentClass;
 		Class<? extends AbstractAgentBody> bodyClass;
 		Class<? extends AbstractAgentMind> mindClass;
+		
 		Set<Class<?>> effectorClasses = loader.getByExtending(AbstractEffector.class);
-		
 		Set<Class<?>> sensorClasses = loader.getByExtending(AbstractSensor.class);
-		
 		
 		Iterator<Class<?>> brainIterator = loader.getByExtending(AbstractAgentBrain.class).iterator();
 		Iterator<Class<?>> bodyIterator = loader.getByExtending(AbstractAgentBody.class).iterator();
@@ -132,13 +136,11 @@ public class AgentWrapper extends Package{
 			agentClass = DefaultAgentBrain.class;
 		}
 		
-		
 		if (bodyIterator.hasNext()) {
 		bodyClass = (Class<? extends AbstractAgentBody>) bodyIterator.next();
 		}else{
 			bodyClass = DefaultAgentBody.class;
 		}
-		
 		
 		if (mindIterator.hasNext()) {
 		mindClass = (Class<? extends AbstractAgentMind>) mindIterator.next();
@@ -147,6 +149,7 @@ public class AgentWrapper extends Package{
 		}
 		
 		final Map<String, View> views = 		loader.getWithFileType(".rythm.html");
+		
 		//final Map<String, String> resources = loader
 		
 		try {
@@ -161,35 +164,38 @@ public class AgentWrapper extends Package{
 			AbstractAgentBrain brain = (AbstractAgentBrain) agentCon.newInstance();
 			
 			AbstractAgentBody body = (AbstractAgentBody) bodyCon.newInstance();
-			Map<String, Resource> resources = new HashMap<String, Resource>();
-			for (String key : resourceMap.keySet()) {
-				ResourceDB resourceDB = resourceMap.get(key);
 			
-				resources.put(key, JarFileLoader.getResource(resourceDB));
-			}
-			body.setRenderer(views, resources);
+		
+			body.setEnvironment(containerObj);
+			body.setRenderer(views, JarFileLoader.getResourceMap(resourceList));
+			body.setAgentId(getName());
 			AbstractAgentMind mind = (AbstractAgentMind) mindCon.newInstance();
 			mind.setBrain(brain);
 			
 			brain.setMind(mind);
 		    brain.setBody(body);
 		    
+		    int index = 0;
 			for (Class<?> clazz : effectorClasses) {
 				Constructor<?> eff = clazz.getDeclaredConstructor();
 				AbstractEffector effector = (AbstractEffector) eff.newInstance();
 				effector.setBody(body);
+				effector.setId(clazz.getName()+" "+index++);
 				body.registerEffector(effector);
 			}
+			index = 0;
 			for (Class<?> clazz : sensorClasses) {
 				Constructor<?> sen;
 					sen = clazz.getDeclaredConstructor();
 				
 				AbstractSensor sensor = (AbstractSensor) sen.newInstance();
-				 
-				sensor.init(getName(), body);
+				
+				sensor.init(clazz.getName()+" "+index++, body);
+				
 				body.registerSensor(sensor, true);
 				
 			}
+			brain.startCycle();
 			return body;
 			
 		} catch (InstantiationException | IllegalAccessException
@@ -207,7 +213,6 @@ public class AgentWrapper extends Package{
 		return find.findList();
 	}
 	public void save() {
-		
 		Ebean.save(this);
 	}
 	public static AgentWrapper getByName(String name) {

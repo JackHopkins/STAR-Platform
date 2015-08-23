@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import uk.ac.rhul.cs.dice.star.container.AbstractContainer;
 
+@Deprecated
 public enum ContainerIndex {
 	INSTANCE {
 		private Map<String, AbstractContainer> containers = new ConcurrentHashMap<String, AbstractContainer>();

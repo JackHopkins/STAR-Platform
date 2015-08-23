@@ -1,6 +1,8 @@
 import akka.actor.ActorRef;
 import akka.actor.Props;
 
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.FetchConfig;
 import com.avaje.ebean.enhance.agent.InputStreamTransform;
 import com.avaje.ebean.enhance.agent.Transformer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -58,6 +60,7 @@ import uk.ac.rhul.cs.dice.star.containers.welcome.TutorialAgentMind;
 import uk.ac.rhul.cs.dice.star.containers.welcome.TutorialEffector;
 import uk.ac.rhul.cs.dice.star.containers.welcome.TutorialSensor;
 import uk.ac.rhul.cs.dice.star.persistence.Resource;
+import uk.ac.rhul.cs.dice.star.persistence.models.AgentWrapper;
 import uk.ac.rhul.cs.dice.star.persistence.models.ResourceDB;
 import uk.ac.rhul.cs.dice.star.entity.View;
 import uk.ac.rhul.cs.dice.star.persistence.models.PhysicsWrapper;
@@ -93,12 +96,12 @@ public class Global extends GlobalSettings
 	@Override
 	public void onStart(Application application)
 	{ 
-
 		
 		Akka.system().scheduler().scheduleOnce(
 				Duration.create(0, TimeUnit.MILLISECONDS),
 				new Runnable() {
 					public void run() {
+							
 						
 							String container = "welcome";
 							String agent = "tutorial-agent";

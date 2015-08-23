@@ -37,6 +37,7 @@ public class UploadController extends Controller {
 			try {
 				pack.put("name",agent.getName());
 				pack.put("uploaded", agent.date.toLocaleString());
+				arr.put(pack);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -45,12 +46,15 @@ public class UploadController extends Controller {
 	}
 	public static Result getPhysics() {
 		List<PhysicsWrapper> physics = PhysicsWrapper.getPhysicsList();
+		Logger.debug(physics.size()+"");
+		
 		JSONArray arr = new JSONArray();
 		for (PhysicsWrapper physic : physics) {
 			JSONObject pack = new JSONObject();
 			try {
 				pack.put("name",physic.getName());
 				pack.put("uploaded", physic.date.toLocaleString());
+				arr.put(pack);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -59,14 +63,23 @@ public class UploadController extends Controller {
 	}
 
 	public static Result uploadAgent() {
-		File file = request().body().asRaw().asFile();
-		Map<String, String[]> queryParameters = request().queryString();
+		File file;
+		Map<String, String[]> parameters;
+		try {
+		file = request().body().asRaw().asFile();
+		parameters = request().queryString();
+		}catch(NullPointerException e) {
+		file = request().body().asMultipartFormData().getFiles().get(0).getFile();
+		parameters = request().body().asMultipartFormData().asFormUrlEncoded();
+		}
+		
+	
 
 		if (file != null) {
 			AgentWrapper wrapper;
-			if (queryParameters.containsKey(NAME)) {
+			if (parameters.containsKey(NAME)) {
 				try {
-					wrapper = new AgentWrapper(file, queryParameters.get(NAME)[0]);
+					wrapper = new AgentWrapper(file, parameters.get(NAME)[0]);
 				} catch (PluginInstantiationException e) {
 					e.printStackTrace();
 					return badRequest();
@@ -84,15 +97,23 @@ public class UploadController extends Controller {
 	}
 
 	public static Result uploadPhysics() {
-		File file = request().body().asRaw().asFile();	
-
+		File file;
+		Map<String, String[]> parameters;
+		try {
+		file = request().body().asRaw().asFile();
+		parameters = request().queryString();
+		}catch(NullPointerException e) {
+		file = request().body().asMultipartFormData().getFiles().get(0).getFile();
+		parameters = request().body().asMultipartFormData().asFormUrlEncoded();
+		}
 		
-		Map<String, String[]> queryParameters = request().queryString();
+		Logger.debug("Physics uploading");
+		
 		if (file != null) {
 			PhysicsWrapper wrapper;
-			if (queryParameters.containsKey(NAME)) {
+			if (parameters.containsKey(NAME)) {
 				try {
-					wrapper = new PhysicsWrapper(file, queryParameters.get(NAME)[0]);
+					wrapper = new PhysicsWrapper(file, parameters.get(NAME)[0]);
 					
 				} catch (PluginInstantiationException e) {
 					e.printStackTrace();
@@ -110,7 +131,7 @@ public class UploadController extends Controller {
 			Logger.error("Physics JAR not found.");	
 			return badRequest("Physics JAR not found.");
 		}
-
+		Logger.debug("Currently there are: "+PhysicsWrapper.getPhysicsList().size()+" physics stored.");
 		return ok();
 
 	}

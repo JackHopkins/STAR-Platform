@@ -51,6 +51,7 @@ public class ResourceFinder {
 		System.out.println(controllers.routes.Assets.at(path).toString());
 		return new Resource(controllers.routes.Assets.at(path).toString(), name);
 	}
+	@Deprecated
 	public static Map<String, ResourceDB> findResources(String scannedPackage) {
 	
 		File scannedDir = Play.getFile(scannedPackage, Play.current());
@@ -63,7 +64,7 @@ public class ResourceFinder {
 		}
 		return resources;
 	}
-
+	@Deprecated
 	private static Map<String, ResourceDB> findResources(File file, String scannedPackage) {
 		Map<String, ResourceDB> views = new HashMap<String, ResourceDB>();
 		String resource = scannedPackage + DOT + file.getName();
@@ -85,6 +86,7 @@ public class ResourceFinder {
 		return views;
 	}
 
+	@Deprecated
 	public static ResourceDB getResourceFromFile(File file) throws IOException {
 		final InputStream input = new FileInputStream(file);//getClass().getClassLoader().getResourceAsStream(classAsPath);
 
@@ -94,9 +96,9 @@ public class ResourceFinder {
 		String className = file.getName().substring(file.getName().length()-fileTypeLength);
 		className = className.replace('/', '.');
 		byte[] bytes = ByteStreams.toByteArray(input);
-		ResourceDB resource = new ResourceDB(className, "");
+		//ResourceDB resource = new ResourceDB(className, "");
 		//resource.load(container);
-		return resource;
+		return null;
 	}
 
 	

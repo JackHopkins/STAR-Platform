@@ -61,16 +61,17 @@ public class PhysicsWrapper extends Package {
 	}
 
 	public static List<PhysicsWrapper> getPhysicsList() {
-		return new ArrayList<PhysicsWrapper>();//MongoDBManager.getInstance().dataStore.createQuery(AgentJARWrapper.class).field("uploader").equal(user).asList();
+		return find.findList();//MongoDBManager.getInstance().dataStore.createQuery(AgentJARWrapper.class).field("uploader").equal(user).asList();
 	}
 
 
 	public void save() {
 		System.out.println("Saving physicswrapper with id: "+this.getId());
 		Ebean.save(this);
+		
 	}
 	public static PhysicsWrapper get(Long id2) {
-		return PhysicsWrapper.find.byId(id2);//MongoDBManager.getInstance().dataStore.get(AgentJARWrapper.class, id2);
+		return find.byId(id2);//MongoDBManager.getInstance().dataStore.get(AgentJARWrapper.class, id2);
 	}
 	public void delete() {
 		Ebean.delete(this);
@@ -92,7 +93,7 @@ public class PhysicsWrapper extends Package {
 	
 	public static Physics getPhysicsByName(String name) {
 		try {
-			List<PhysicsWrapper> physics = PhysicsWrapper.find.where().eq("name", name).findList();
+			List<PhysicsWrapper> physics = find.where().eq("name", name).findList();
 			
 			if (physics.isEmpty()) return null;
 			return physics.get(0).getPhysics();

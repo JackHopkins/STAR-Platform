@@ -24,14 +24,15 @@ create table physics_wrapper (
   date                      timestamp)
 ;
 
-create table resource (
-  agent_wrapper_id          integer not null,
+create table resource_db (
+  id                        integer primary key AUTOINCREMENT,
   location                  varchar(255),
-  name                      varchar(255))
+  name                      varchar(255),
+  agent                     integer)
 ;
 
-alter table resource add constraint fk_resource_agent_wrapper_1 foreign key (agent_wrapper_id) references agent_wrapper (id);
-create index ix_resource_agent_wrapper_1 on resource (agent_wrapper_id);
+alter table resource_db add constraint fk_resource_db_agent_1 foreign key (agent) references agent_wrapper (id);
+create index ix_resource_db_agent_1 on resource_db (agent);
 
 
 
@@ -45,7 +46,7 @@ drop table package;
 
 drop table physics_wrapper;
 
-drop table resource;
+drop table resource_db;
 
 PRAGMA foreign_keys = ON;
 

@@ -51,10 +51,12 @@ public class Agent extends Controller {
         GolemPlatform.getInstance().createAgent(container, agent);
     	}catch(ContainerNotFoundException e) {
     	e.printStackTrace();
-    	return badRequest();
+    	Logger.error("Container not found");
+    	return badRequest("Container not found");
     	} catch (AgentNotFoundException e) {
 			e.printStackTrace();
-			return badRequest();
+			Logger.error("Agent not found");
+			return badRequest("Agent not found");
 		}
     	return ok();
     }
