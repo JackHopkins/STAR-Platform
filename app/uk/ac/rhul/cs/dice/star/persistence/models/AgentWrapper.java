@@ -226,5 +226,11 @@ public class AgentWrapper extends Package{
 	);
 	public void delete() {
 		Ebean.delete(this);
+	}
+	public static void deleteById(Long id) {
+		Ebean.delete(find.byId(id));
+	}
+	public static void deleteByName(String name) {
+		Ebean.delete(getByName(name));
 	} 
 }

@@ -29,6 +29,12 @@ public class UploadController extends Controller {
 
 	private final static String NAME = "name";
 	
+	public static Result deleteAgent() {
+		Map<String, String[]> parameters = request().queryString();
+		AgentWrapper.deleteByName(parameters.get(NAME)[0]);
+		Logger.debug("Deleting agent with name: "+parameters.get(NAME)[0]);
+		return getAgents();
+	}
 	public static Result getAgents() {
 		List<AgentWrapper> agents = AgentWrapper.getAgents();
 		JSONArray arr = new JSONArray();

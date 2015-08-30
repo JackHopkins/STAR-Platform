@@ -98,15 +98,18 @@
     </script>
 	
 		<div class="col-md-4 sidebar">
+		<div id="sidebar-header">
+		<h4>Running Containers</h4>
+		<a href="#" ng-click="open(0)">RUN <i class="fa fa-cog fa-2"></i></a>
+		</div>
 		<!-- TREE CONTROL -->
 			<div id="showContainers">
-				<h4>Running Containers</h4>
+				
 			<treecontrol class="tree-classic"
    tree-model="dataForTheTree"
    options="treeOptions"
    on-selection="showSelected(node, $parentNode)"
-   selected-node="node1"
-   >
+   selected-node="node1">
    {{node.name}}
 </treecontrol>
 
@@ -116,7 +119,7 @@
 				<div class="form-group">
 					<input type="text" ng-model="containerName" class="form-control half" placeholder="Container Name">
 					<select class="half" ng-model="physicsChoice" ng-options="item.name for item in physics track by item.id"></select>
-					<button type="button" class="btn btn-primary">CREATE</button>
+					<a type="button" class="btn btn-primary" id="spawnContainer" ng-click="spawnContainer()">CREATE</a>
 				</div>
 			</div>
 		</div>
@@ -134,6 +137,40 @@
 			
 			<iframe ng-show="agentSelected" ng-src="{{getIframeSrc(selectedNode.name, parent.name)}}"></iframe>
 			<div ng-show="containerSelected" >
+			
+			<h4>Add Neighbour</h4>
+			<table st-table="rowCollection" class="table table-striped">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Name</th>
+						<th>Location</th>
+						<th>Status</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="row in neighbours">
+					<td>
+						<button ng-click="" type="button" class="close">
+								<span aria-hidden="true">&plus;</span>
+							</button>
+						</td>
+						<td>{{row.name}}</td>
+						<td>{{row.location}}</td>
+						<td>{{row.status}}</td>
+						
+						<td>
+							<button type="button" class="close" ng-click="" data-dismiss="alert"
+								aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<hr>
+			<h4>Add Entity</h4>
 			<table st-table="rowCollection" class="table table-striped">
 				<thead>
 					<tr>
@@ -146,7 +183,7 @@
 				<tbody>
 					<tr ng-repeat="row in agentFiles">
 						<td>
-						<button ng-click="spawn(row)" type="button" class="close">
+						<button ng-click="spawnAgent(row)" type="button" class="close">
 								<span aria-hidden="true">&plus;</span>
 							</button>
 						</td>
@@ -218,7 +255,7 @@ app.directive('fileModel', ['$parse', function ($parse) {
     };
 }]);
 
-app.service('fileUpload', ['$http', function ($http) {
+app.service('fileUpload', function ($http, $rootScope) {
     this.uploadFileToUrl = function(file, name, uploadUrl){
         var fd = new FormData();
         fd.append('file', file);
@@ -228,18 +265,22 @@ app.service('fileUpload', ['$http', function ($http) {
             headers: {'Content-Type': undefined}
         })
         .success(function(){
-            alert('g');
+        	 $rootScope.$broadcast("getAgents");
         })
         .error(function(){
             alert('d');
         });
     }
-}]);
+});
 
-app.controller('AppCtrl', function($scope, $http, $modal, $log) {
+app.controller('AppCtrl', function($scope, $http, $modal, $log, $rootScope) {
 	
 	  $scope.animationsEnabled = true;
 	  $scope.upload = "";
+	  
+	  $rootScope.$on("getAgents", function(){
+			$scope.getAgents();
+		}, true);
 	  
 	 //$scope.printParent = function ($event) {
 		//  var root = $scope;
@@ -253,8 +294,8 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log) {
 		 // }
 	//	}
 	  $scope.getIframeSrc = function (container, agent) {
-  return '/v1/'+ agent +'/' + container;
-};
+		return '/v1/'+ agent +'/' + container;
+		};
 	
 		
 	  $scope.open = function (type) {
@@ -339,7 +380,7 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log) {
 	
 	var getStarInfo = function() {
 		$scope.dataForTheTree = [];
-	$http.get('/v1/container').success(function(data, status, headers, config) {
+	$http.get('/v1/').success(function(data, status, headers, config) {
     	$.each(data, function(i, item) {
     		var container = {};
     		var children = [];
@@ -355,24 +396,36 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log) {
       alert("Could not load container JSON data. This should never happen, as the data is served locally. Soz.")
     });
 	}
+	$scope.neighbours = [];
+	
 	$scope.agentFiles = [];
 	
-	var getAgents = function() {
+	$scope.getAgents = function() {
 	$scope.agentFiles = [];
-
-	$http.get('/v1/upload/agent').
-    success(function(data, status, headers, config) {
-    	$.each(data, function(i, item) {
-    	   $scope.agentFiles.push(item);
+		$http.get('/v1/upload/agent').
+    	success(function(data, status, headers, config) {
+    		$.each(data, function(i, item) {
+    	   		$scope.agentFiles.push(item);
+    		});
+    	}).
+    	error(function(data, status, headers, config) {
+      		alert("Could not load agent file JSON data. This should never happen, as the data is served locally. Soz.")
     	});
-    }).
-    error(function(data, status, headers, config) {
-      alert("Could not load agent file JSON data. This should never happen, as the data is served locally. Soz.")
-    });
+	}
+	$scope.spawnContainer = function() {
+		var spawnUrl = "/v1/"+$scope.containerName;
+		 $http.post(spawnUrl, "{}")
+	        .success(function(){
+	        	 getStarInfo();
+	        })
+	        .error(function(response){
+	            alert(response);
+	        });
 	}
 	
-	$scope.spawn = function(row) {
+	$scope.spawnAgent = function(row) {
 		var spawnUrl = "/v1/"+$scope.selectedNode.name+"/"+row.name;
+		alert(spawnUrl);
 		 $http.post(spawnUrl, "{}")
 	        .success(function(){
 	        	 getStarInfo();
@@ -382,10 +435,21 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log) {
 	        });
 	}
 	$scope.deleteAgent = function(row) {
-		var deleteUrl = "/v1/"+$scope.selectedNode.name+"/"+row.name;
-		 $http.post(spawnUrl, "{}")
-	        .success(function(){
-	            alert('posted');
+		var deleteUrl = "/v1/upload/agent";
+		alert(deleteUrl);
+		 $http({
+			  method: 'DELETE',
+			  url: deleteUrl,
+			  params: {
+			    name: row.name
+			  },
+			  data: '{}',
+			  headers: {
+			    'Accept': 'application/json'
+			  },
+			  cache: true
+			}).success(function(response){
+	          $scope.getAgents();
 	        })
 	        .error(function(response){
 	            alert(response);
@@ -402,7 +466,6 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log) {
     success(function(data, status, headers, config) {
     	$.each(data, function(i, item) {
     		item.id = index++;
-    		
     	    $scope.physics.push(item);
     	});
     }).
@@ -411,7 +474,7 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log) {
     });
 	
 	$scope.containerName;
-	getAgents();
+	$scope.getAgents();
 	getStarInfo();
 	// [ {name: 'Agent1', uploaded : '7/3/2015'}];
 	

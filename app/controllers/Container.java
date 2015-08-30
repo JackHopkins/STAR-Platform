@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 
+import org.javatuples.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,9 +21,12 @@ import play.libs.F.Function0;
 import play.libs.F.Promise;
 import play.libs.Json;
 import play.mvc.*;
+import uk.ac.rhul.cs.dice.star.action.Action;
 import uk.ac.rhul.cs.dice.star.action.Event;
 import uk.ac.rhul.cs.dice.star.agent.AgentBody;
 import uk.ac.rhul.cs.dice.star.container.AbstractContainer;
+import uk.ac.rhul.cs.dice.star.container.ContainerHistory;
+import uk.ac.rhul.cs.dice.star.container.DefaultContainer;
 import uk.ac.rhul.cs.dice.star.entity.Entity;
 import uk.ac.rhul.cs.dice.star.persistence.models.PhysicsWrapper;
 import uk.ac.rhul.cs.dice.star.physics.Physics;
@@ -32,36 +36,31 @@ public class Container extends Controller {
 	private static final String PHYSICS = "physics";
 	private static final String APPLICATIONS = "applications";
 	
-	public static Result get() {
-		JSONArray containers = new JSONArray();
-		for (AbstractContainer container : GolemPlatform.getInstance().getContainers()) {
-			JSONObject obj = new JSONObject();
-			try {
-				obj.put("name", container.getName());
-				obj.put("physics", container.getGovernorClassName());
-				JSONArray arr = new JSONArray();
-				
-				for (String name : container.getEntityNames()) {
-					
-					JSONObject entity = new JSONObject();
-					Entity ent = container.getEntity(name);
-					entity.put("id", ent.getId());
-					
-					if (ent instanceof AgentBody) {
-					entity.put("type", "Agent");
-					}else{
-						entity.put("type", "Entity");
-					}
-					
-					arr.put(entity);
-				}
-				obj.put("entities", arr);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			containers.put(obj);
+
+	public static Result get(String container) {
+		DefaultContainer containerObj;
+		try {
+		containerObj = (DefaultContainer) GolemPlatform.getInstance().getContainer(container);
+		Logger.debug("Found container: \""+container+"\"");
+    	
+		}catch(ClassCastException e) {
+			return badRequest(container +" does not have a history");
 		}
-		return ok(containers.toString());
+		ContainerHistory history = containerObj.getHistory();
+		int eventNumber = history.size();
+    	StringBuilder events = new StringBuilder();
+    	for(int i = 0; i < eventNumber; i++) {
+			Event evt = history.get(i);
+			Action act = evt.getAction();
+			Pair<String, String> payload = (Pair<String, String>) act.getPayload();
+		
+			//if (act.getActionType().equals(CleanActionType.PHYSICAL_ACT.toString()))
+				events.append(evt.getTimestamp() + "," + payload.getValue0() + "," + payload.getValue1() + "\n");
+		}
+		
+		return ok(events.toString());
+    	
+    	
 	}
     public static Result post(String container) {
     	Map<String, String[]> parameters = request().queryString();

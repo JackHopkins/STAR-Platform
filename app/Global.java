@@ -103,7 +103,7 @@ public class Global extends GlobalSettings
 					public void run() {
 							
 						
-							String container = "welcome";
+							String container = "welcome"; 
 							String agent = "tutorial-agent";
 							String path = "/assets/containers/"+container;
 							

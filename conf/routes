@@ -15,7 +15,8 @@ GET		/containers						controllers.Application.containers()
 POST		/v1/upload/agent			controllers.UploadController.uploadAgent()
 #Gets JSON information regarding uploaded agents
 GET			/v1/upload/agent			controllers.UploadController.getAgents()
-
+#Deletes an agent jar file
+DELETE		/v1/upload/agent			controllers.UploadController.deleteAgent()
 
 #Handles the uploading of new jar physics files
 POST		/v1/upload/physics			controllers.UploadController.uploadPhysics()
@@ -29,8 +30,12 @@ POST 		/v1/:container		  		controllers.Container.post(container)
 DELETE		/v1/:container				controllers.Container.delete(container)
 #Puts an event in this container 
 PUT			/v1/:container				controllers.Container.put(container)
+#Gets the event history of this container as JSON
+GET			/v1/:container				controllers.Container.get(container)
+
+
 #Gets JSON information regarding running containers
-GET			/v1/container				controllers.Container.get()
+GET			/v1/						controllers.Application.get()
 
 
 #Implemented to allow browsers to receive communications from agents.
