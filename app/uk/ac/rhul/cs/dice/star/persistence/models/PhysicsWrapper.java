@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -45,9 +46,14 @@ public class PhysicsWrapper extends Package {
 	@SuppressWarnings("unchecked")
 	public Physics getPhysics() throws IOException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		JarFileLoader loader = new JarFileLoader(getFile());
+		
 		Class<? extends Physics> agentClass;
 		try {
 			agentClass = (Class<? extends Physics>) loader.getByExtending(Physics.class).iterator().next();
+			
+			//Load all extraneous classes
+			//loader.getByNotExtending(Physics.class);
+			
 			System.out.println("PHYSICS: "+agentClass.getName());
 			Constructor physicsConstructor = agentClass.getDeclaredConstructor();
 			Physics physics = (Physics) physicsConstructor.newInstance();

@@ -32,10 +32,12 @@ import uk.ac.rhul.cs.dice.star.agent.AbstractAgentBrain;
 import uk.ac.rhul.cs.dice.star.agent.AbstractAgentMind;
 import uk.ac.rhul.cs.dice.star.agent.DefaultAgentBody;
 import uk.ac.rhul.cs.dice.star.agent.DefaultAgentBrain;
+import uk.ac.rhul.cs.dice.star.container.AbstractContainer;
 import uk.ac.rhul.cs.dice.star.container.Container;
 import uk.ac.rhul.cs.dice.star.entity.View;
 import uk.ac.rhul.cs.dice.star.persistence.JarFileLoader;
 import uk.ac.rhul.cs.dice.star.persistence.Resource;
+import uk.ac.rhul.cs.dice.star.physics.Physics;
 
 @Entity
 public class AgentWrapper extends Package{
@@ -165,7 +167,7 @@ public class AgentWrapper extends Package{
 			
 			AbstractAgentBody body = (AbstractAgentBody) bodyCon.newInstance();
 			
-		
+			System.out.println("Container Physics: "+((AbstractContainer)containerObj).getGovernor());
 			body.setEnvironment(containerObj);
 			body.setRenderer(views, JarFileLoader.getResourceMap(resourceList));
 			body.setAgentId(getName());
@@ -175,18 +177,10 @@ public class AgentWrapper extends Package{
 			brain.setMind(mind);
 		    brain.setBody(body);
 		    
-		    int index = 0;
-			for (Class<?> clazz : effectorClasses) {
-				Constructor<?> eff = clazz.getDeclaredConstructor();
-				AbstractEffector effector = (AbstractEffector) eff.newInstance();
-				effector.setBody(body);
-				effector.setId(clazz.getName()+" "+index++);
-				body.registerEffector(effector);
-			}
-			index = 0;
+		    
+		   int index = 0;
 			for (Class<?> clazz : sensorClasses) {
-				Constructor<?> sen;
-					sen = clazz.getDeclaredConstructor();
+				Constructor<?> sen = clazz.getDeclaredConstructor();
 				
 				AbstractSensor sensor = (AbstractSensor) sen.newInstance();
 				
@@ -195,6 +189,16 @@ public class AgentWrapper extends Package{
 				body.registerSensor(sensor, true);
 				
 			}
+			
+		    index = 0;
+			for (Class<?> clazz : effectorClasses) {
+				Constructor<?> eff = clazz.getDeclaredConstructor();
+				AbstractEffector effector = (AbstractEffector) eff.newInstance();
+				effector.setBody(body);
+				effector.setId(clazz.getName()+" "+index++);
+				body.registerEffector(effector);
+			}
+			
 			brain.startCycle();
 			return body;
 			

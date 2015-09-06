@@ -5,14 +5,13 @@ import exceptions.ContainerNotFoundException;
 import models.GolemPlatform;
 import play.*;
 import play.libs.F.Function;
-import play.libs.F.Function0;
 import play.libs.F.Promise;
 import play.mvc.*;
 import play.twirl.api.Html;
 import uk.ac.rhul.cs.dice.star.http.ErrorCode;
 import uk.ac.rhul.cs.dice.star.http.HttpRequest;
+import uk.ac.rhul.cs.dice.star.http.HttpRequestType;
 import uk.ac.rhul.cs.dice.star.http.HttpResponse;
-import views.html.*;
 
 public class Agent extends Controller {
 
@@ -22,7 +21,8 @@ public class Agent extends Controller {
 				request().queryString(),
 				request().host(),
 				request().path(),
-				request().body().asText());
+				request().body().asText(),
+				HttpRequestType.GET);
 		
 		
 		return GolemPlatform.getInstance().routeRequest(httpRequest, container, agent).map(

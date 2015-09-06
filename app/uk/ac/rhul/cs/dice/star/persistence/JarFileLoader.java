@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -28,6 +30,7 @@ import play.api.Play;
 import uk.ac.rhul.cs.dice.star.persistence.Resource;
 import uk.ac.rhul.cs.dice.star.persistence.models.AgentWrapper;
 import uk.ac.rhul.cs.dice.star.persistence.models.ResourceDB;
+import uk.ac.rhul.cs.dice.star.physics.Physics;
 import uk.ac.rhul.cs.dice.star.action.AbstractSensor;
 import uk.ac.rhul.cs.dice.star.entity.View;
 
@@ -63,6 +66,38 @@ public final class JarFileLoader extends ClassLoader {
 		};
 		return resources;
 	}
+
+	public Set<Class<?>> getByNotExtending(Class<?> type) throws MalformedURLException, ClassNotFoundException {
+		Enumeration<?> e = file.entries();
+
+		Set<Class<?>> classes = new HashSet<Class<?>>();
+		
+		URL[] urls = { new URL("jar:file://" + path+"!/") };
+		URLClassLoader loader = URLClassLoader.newInstance(urls,Play.current().classloader());
+		
+		while (e.hasMoreElements()) {
+			JarEntry je = (JarEntry) e.nextElement();
+			
+			if(je.isDirectory() || !je.getName().endsWith(".class")){
+				continue;
+			}
+			// -6 because of .class
+			String className = je.getName().substring(0,je.getName().length()-6);
+			className = className.replace('/', '.');
+			
+			Class.forName(className, true, loader);
+			
+			Class<?> c =  loader.loadClass(className);//Play.current().classloader().loadClass(className);
+			Logger.debug("Loaded class with name: "+c.getName());
+			
+			if (!type.isAssignableFrom(c)) {
+				
+				classes.add(c);
+			}
+		}
+	         
+		return classes;
+	}
 	public Set<Class<?>> getByExtending(Class<?> type) throws MalformedURLException, ClassNotFoundException {
 		Enumeration<?> e = file.entries();
 
@@ -81,7 +116,6 @@ public final class JarFileLoader extends ClassLoader {
 			String className = je.getName().substring(0,je.getName().length()-6);
 			className = className.replace('/', '.');
 			
-			AbstractSensor sensor;
 			Class.forName(className, true, loader);
 			
 			Class<?> c =  loader.loadClass(className);//Play.current().classloader().loadClass(className);

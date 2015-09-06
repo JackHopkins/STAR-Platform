@@ -59,9 +59,10 @@
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse"
 					data-target=".navbar-collapse">
-					<span class="sr-only">Toggle navigation</span> <span
-						class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span>
+					<span class="sr-only">Toggle navigation</span> 
+					<span class="icon-bar"></span> 
+					<span class="icon-bar"></span> 
+					<span class="icon-bar"></span>
 				</button>
 				<a class="navbar-brand" href="index.html"><i class="fa fa-star"></i>
 					STAR.</a>
@@ -100,7 +101,7 @@
 		<div class="col-md-4 sidebar">
 		<div id="sidebar-header">
 		<h4>Running Containers</h4>
-		<a href="#" ng-click="open(0)">RUN <i class="fa fa-cog fa-2"></i></a>
+		<a href="#" ng-click="config()">RUN <i class="fa fa-cog fa-2"></i></a>
 		</div>
 		<!-- TREE CONTROL -->
 			<div id="showContainers">
@@ -115,6 +116,7 @@
 
 			</div>
 
+		
 			<div id="createContainer">
 				<div class="form-group">
 					<input type="text" ng-model="containerName" class="form-control half" placeholder="Container Name">
@@ -126,24 +128,54 @@
 
 		<div id="createAgent" class="col-md-8">
 			<div>
-				<h4>{{parent.name}}/{{selectedNode.name}}</h4>
-				<a href="/v1/{{parent.name}}/{{selectedNode.name}}" class="btn btn-primary" ng-show="agentSelected">
-					<i class="fa fa-sign-out"></i>
-				</a>
-				<a href="" class="btn btn-primary" ng-show="agentSelected">
-					<i class="fa fa-trash-o"></i>
-				</a>
+				<h4 ng-hide="configSelected">{{parent.name}}/{{selectedNode.name}}</h4>
+				<h4 ng-show="configSelected">Define some metaphysics</h4>
+				
+				
+				<div ng-show="agentSelected" id="agentSelected">
+					<a href="/v1/{{parent.name}}/{{selectedNode.name}}" class="btn btn-primary">
+						<i class="fa fa-sign-out"></i>
+					</a>
+					<a href="" class="btn btn-primary">
+						<i class="fa fa-trash-o"></i>
+					</a>
+				</div>
+				
+				
+				<div ng-show="containerSelected" id="containerSelected">
+					
+					<a ng-click="killContainer()" class="btn btn-primary">
+						<i class="fa fa-trash-o"></i>
+					</a>
+				</div>
+				
+				<div ng-show="configSelected">
+				
+				</div>
 			</div>
+			
+			<textarea ng-show="configSelected">
+			
+			</textarea>
 			
 			<iframe ng-show="agentSelected" ng-src="{{getIframeSrc(selectedNode.name, parent.name)}}"></iframe>
 			<div ng-show="containerSelected" >
 			
-			<h4>Add Neighbour</h4>
+			
+			<h4 id="neighbourTitle">Add Neighbour</h4>
+			
+			<div id="addNeighbour">
+			<button id="neighbourButton" ng-click="addNeighbour()" type="button" class="close">
+				<span aria-hidden="true">&plus;</span>
+			</button>	
+			<input ng-show="neighbourInput" type="text" name="fname">
+			</div>
+			
 			<table st-table="rowCollection" class="table table-striped">
 				<thead>
 					<tr>
 						<th></th>
-						<th>Name</th>
+						
 						<th>Location</th>
 						<th>Status</th>
 						<th></th>
@@ -156,7 +188,7 @@
 								<span aria-hidden="true">&plus;</span>
 							</button>
 						</td>
-						<td>{{row.name}}</td>
+						
 						<td>{{row.location}}</td>
 						<td>{{row.status}}</td>
 						
@@ -297,7 +329,12 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log, $rootScope) {
 		return '/v1/'+ agent +'/' + container;
 		};
 	
-		
+	  $scope.config = function() {
+		$scope.agentSelected = false;
+       	$scope.containerSelected = false;
+       	$scope.configSelected = true;
+	  };
+	  
 	  $scope.open = function (type) {
 	  var modalInstance;
 	  
@@ -341,7 +378,11 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log, $rootScope) {
 	  
 	$scope.containerSelected = false;
 	$scope.agentSelected = false;
+	$scope.neighbourInput = false;
 	
+	$scope.addNeighbour = function() {
+		$scope.neighbourInput = true;
+	}
 	  $scope.showSelected = function(sel, parent) {
 	     $scope.selectedNode = sel;
 	     $scope.parent = parent;
@@ -351,6 +392,7 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log, $rootScope) {
 	         case "Agent":
 	         	$scope.agentSelected = true;
 	         	$scope.containerSelected = false;
+	         	$scope.configSelected = false;
 	         break;
 	        
 	         case "Entity": break;
@@ -358,6 +400,7 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log, $rootScope) {
 	         default:
 	        	$scope.containerSelected = true;
         	 	$scope.agentSelected = false;
+        	 	$scope.configSelected = false;
 	         }
 	     };
 	     
@@ -384,6 +427,7 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log, $rootScope) {
     	$.each(data, function(i, item) {
     		var container = {};
     		var children = [];
+    		container.physics = item.physics;
     		container.name = item.name;
     		$.each(item.entities, function(i, child) {
     			children.push({"name" : child.id, "type" : child.type});
@@ -396,7 +440,7 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log, $rootScope) {
       alert("Could not load container JSON data. This should never happen, as the data is served locally. Soz.")
     });
 	}
-	$scope.neighbours = [];
+	$scope.neighbours = [{location : 'http://192.168.5.1:9000', status : 'active'}];
 	
 	$scope.agentFiles = [];
 	
@@ -412,21 +456,31 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log, $rootScope) {
       		alert("Could not load agent file JSON data. This should never happen, as the data is served locally. Soz.")
     	});
 	}
+	$scope.killContainer = function() {
+		var killUrl = "/v1/"+$scope.selectedNode.name;
+		$http.delete(killUrl).error(function(response){
+			alert('Could not kill '+$scope.selectedNode.name);
+		}).success(function(response){
+			getStarInfo();
+		});
+	}
 	$scope.spawnContainer = function() {
 		var spawnUrl = "/v1/"+$scope.containerName;
-		 $http.post(spawnUrl, "{}")
-	        .success(function(){
-	        	 getStarInfo();
-	        })
+		 $http.post(spawnUrl, $.param({physics:$scope.physicsChoice.name}), {
+			    headers:
+			    {
+			        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+			    }
+			})
 	        .error(function(response){
-	            alert(response);
+	          
 	        });
 	}
 	
 	$scope.spawnAgent = function(row) {
 		var spawnUrl = "/v1/"+$scope.selectedNode.name+"/"+row.name;
 		alert(spawnUrl);
-		 $http.post(spawnUrl, "{}")
+		 $http.post(spawnUrl, "{}") 
 	        .success(function(){
 	        	 getStarInfo();
 	        })

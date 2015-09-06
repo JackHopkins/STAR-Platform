@@ -63,17 +63,18 @@ public class Container extends Controller {
     	
 	}
     public static Result post(String container) {
-    	Map<String, String[]> parameters = request().queryString();
+    	Map<String, String[]> parameters = request().body().asFormUrlEncoded();
     	Logger.info("Creating: "+container);
     	if (parameters.containsKey(PHYSICS)) {
     		String physicsName = parameters.get(PHYSICS)[0];
     		Physics physics = PhysicsWrapper.getPhysicsByName(physicsName);
     		if (physics == null) {
     			Logger.error("Physics not found with name: \""+physicsName+"\"");
-    			return badRequest("Physics not found");
+    			return notFound("Physics not found");
     		}
     		Logger.info("Creating container: \""+container+"\" with physics: \""+physics.toString()+"\"");
-    		GolemPlatform.getInstance().createContainer(container, physics);
+    		AbstractContainer containerObj = (AbstractContainer) GolemPlatform.getInstance().createContainer(container, physics);
+    		GolemPlatform.getInstance().registerContainer(container, containerObj);
     	} else {
     		AbstractContainer containerObj = (AbstractContainer) GolemPlatform.getInstance().createContainer(container);
     		Logger.info("Creating container: \""+container+"\" with default physics");
