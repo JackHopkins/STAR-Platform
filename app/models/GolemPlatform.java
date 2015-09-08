@@ -36,9 +36,9 @@ public class GolemPlatform implements Platform {
 	 * Golem runtime
 	 */
 	private Base golem;
-	
+
 	private ConcurrentHashMap<String, AbstractContainer> containers;
-	
+
 	public GolemPlatform() throws Exception {
 		containers = new ConcurrentHashMap<String, AbstractContainer>();
 		golem = new Base("");
@@ -61,7 +61,7 @@ public class GolemPlatform implements Platform {
 	@Override
 	public void registerContainer(String name, Object container) {
 		try {
-		containers.put(name, (AbstractContainer) container);
+			containers.put(name, (AbstractContainer) container);
 		}catch(ClassCastException e) {
 			e.printStackTrace();
 		}
@@ -71,7 +71,7 @@ public class GolemPlatform implements Platform {
 	public Object createContainer(String name) {
 		return createContainer(name, new DefaultPhysics());
 	}
-	
+
 	public AbstractContainer createContainer(String name, Physics physics) {
 		if (containers.containsKey(name)) return (AbstractContainer) getContainer(name);
 		return new DefaultContainer(name, physics);
@@ -80,11 +80,11 @@ public class GolemPlatform implements Platform {
 	public AbstractContainer getContainer(String name) {
 		return containers.get(name);
 	}
-	
+
 	public Collection<AbstractContainer> getContainers() {
 		return containers.values();
 	}
-	
+
 	@Override
 	public void loadAgent(String name, File file) {
 		AgentWrapper agent;
@@ -97,24 +97,41 @@ public class GolemPlatform implements Platform {
 	}
 
 	@Override
-	public void createAgent(String container, String name) throws ContainerNotFoundException, AgentNotFoundException {
-		
+	public String createAgent(String container, String name) throws ContainerNotFoundException, AgentNotFoundException {
+
 		Container containerObj = (Container) containers.get(container);
-			if (containerObj == null) {
-				
+		if (containerObj == null) {
 			containerObj = (Container) createContainer(container);
-			
-			}
+		}
+
+		AgentWrapper wrapper = AgentWrapper.getByName(name);
+		if (wrapper != null) {
 			try {
-				AgentWrapper wrapper = AgentWrapper.getByName(name);
-				if (wrapper != null) {
-					wrapper.run(containerObj);
-				}else{
-					throw new AgentNotFoundException();
-				}
+				return wrapper.run(containerObj);
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new AgentNotFoundException();					
 			}
+		}else{
+			throw new AgentNotFoundException();
+		}		
+	}
+	public String createAgent(String container, String name, String id) throws ContainerNotFoundException, AgentNotFoundException {
+
+		Container containerObj = (Container) containers.get(container);
+		if (containerObj == null) {
+			containerObj = (Container) createContainer(container);
+		}
+
+		AgentWrapper wrapper = AgentWrapper.getByName(name);
+		if (wrapper != null) {
+			try {
+				return wrapper.run(containerObj, id);
+			} catch (Exception e) {
+				throw new AgentNotFoundException();					
+			}
+		}else{
+			throw new AgentNotFoundException();
+		}		
 	}
 
 	@Override
@@ -124,7 +141,7 @@ public class GolemPlatform implements Platform {
 		}
 		containers.clear();
 	}
-	
+
 	public void kill(String id) throws ContainerNotFoundException {
 		AbstractContainer container = containers.get(id);
 		if (container != null) {
@@ -132,7 +149,7 @@ public class GolemPlatform implements Platform {
 			container.kill();
 		}
 	}
-	
+
 	/**
 	 * Routes a HTTP request to a GOLEM agent
 	 * @param request HTTP request
@@ -141,10 +158,10 @@ public class GolemPlatform implements Platform {
 	 * @return
 	 */
 	public Promise<HttpResponse> routeRequest(HttpRequest request, String container, String agent) {
-		
+
 		AbstractContainer containerObj = getContainer(container);
 		if (containerObj == null) return error(ErrorCode.CONTAINER_BADREQUEST);
-				
+
 		return containerObj.route(request, agent);
 	}
 
@@ -155,6 +172,6 @@ public class GolemPlatform implements Platform {
 						return new HttpResponse(code);
 					}
 				}
-			);
+				);
 	}
 }

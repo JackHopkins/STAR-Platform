@@ -22,6 +22,7 @@ import play.Logger;
 import akka.event.Logging.Debug;
 
 import com.avaje.ebean.Ebean;
+import com.ning.http.client.Body;
 
 import exceptions.NoArgConstructorRequiredException;
 import exceptions.PluginInstantiationException;
@@ -94,7 +95,19 @@ public class AgentWrapper extends Package{
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean run(Container containerObj) throws Exception {
+	public String run(Container containerObj) throws Exception {
+
+			return run(containerObj, this.getName()+"-"+containerObj.getEntityNames().size());
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	/**
+	 * @param container
+	 * @return
+	 * @throws Exception
+	 */
+	public String run(Container containerObj, String agentId) throws Exception {
 
 			try {
 				JarFileLoader loader = new JarFileLoader(this.getFile());
@@ -104,13 +117,13 @@ public class AgentWrapper extends Package{
 				body.setAgentId(this.getName()+"-"+containerObj.getEntityNames().size());
 			//	body.setEnvironment(containerObj);
 				containerObj.makePresent(body);
-				
+				return body.getId();
 			} catch (ClassNotFoundException | IOException | IllegalArgumentException | SecurityException e) {
 				e.printStackTrace();
-				return false;
+				throw new Exception(e);
 			}
 
-		return false;
+		
 	}
 
 	@SuppressWarnings("unchecked")
