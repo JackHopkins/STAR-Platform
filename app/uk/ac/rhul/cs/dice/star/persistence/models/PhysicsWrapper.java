@@ -32,7 +32,7 @@ public class PhysicsWrapper extends Package {
 
 	public PhysicsWrapper(File file, String name) throws PluginInstantiationException {
 		super(file, name);
-		
+	
 	}
 	
 	public PhysicsWrapper(String name) {

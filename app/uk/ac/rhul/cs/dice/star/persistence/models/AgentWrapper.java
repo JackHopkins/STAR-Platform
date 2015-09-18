@@ -114,7 +114,8 @@ public class AgentWrapper extends Package{
 				loader.getByExtending(AbstractAgentBrain.class).isEmpty();
 				
 				AbstractAgentBody body = initialiseAgent(loader, containerObj);
-				body.setAgentId(this.getName()+"-"+containerObj.getEntityNames().size());
+				body.setAgentId(agentId);
+				System.out.println("Creating agent with id: "+body.getId());
 			//	body.setEnvironment(containerObj);
 				containerObj.makePresent(body);
 				return body.getId();

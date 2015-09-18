@@ -3,9 +3,9 @@
 <html lang="en" ng-app="star">
 <head>
 
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.js"></script>
+<script src="assets/dashboard/js/angular.js"></script>
 <script
-	src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.0.js"></script>
+	src="assets/dashboard/js/ui-bootstrap.js"></script>
 <script src="assets/dashboard/js/smart-table.min.js"></script>
 
 <meta charset="utf-8">
@@ -18,23 +18,23 @@
 <title>STAR - Simulation Testbed for Agent Research</title>
 
 
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="http://wix.github.io/angular-tree-control/angular-tree-control.js"></script>
-<script type="text/javascript" src="http://fgnass.github.io/spin.js/spin.min.js"></script>
+<script src="assets/dashboard/js/jquery-2.1.4.min.js"></script>
+<script src="assets/dashboard/js/angular-tree-control.js"></script>
+<script type="text/javascript" src="assets/dashboard/js/spin.min.js"></script>
 <script src="assets/dashboard/js/angular-spinner.min.js"></script>
 <script src="assets/dashboard/js/angular-loading-spinner.js"></script>	
-
+<script src="assets/dashboard/js/jquery-ui.min.js"></script>
 
 <!-- Bootstrap core CSS -->
 <link href="assets/css/bootstrap.css" rel="stylesheet">
 
 <!-- Custom styles for this template -->
 <link href="assets/css/style.css" rel="stylesheet">
-<link href="http://wix.github.io/angular-tree-control/css/tree-control.css" rel="stylesheet">
+<link href="assets/dashboard/css/angular-tree-control.css" rel="stylesheet">
 <link href="assets/dashboard/css/dashboard.css" rel="stylesheet">
 
 <!-- <link href="assets/css/fontawesome.css" rel="stylesheet">-->
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="assets/dashboard/css/font-awesome.min.css" rel="stylesheet">
 
 
 
@@ -98,10 +98,15 @@
         </div>
     </script>
 	
+	<a id="collapseButton" ng-click="collapse(this)" data-collapsed="false"><i class="fa fa-arrows-h"></i></a>
+		
+		
 		<div class="col-md-4 sidebar">
+		
 		<div id="sidebar-header">
 		<h4>Running Containers</h4>
 		<a href="#" ng-click="config()">RUN <i class="fa fa-cog fa-2"></i></a>
+		<!-- <a ng-click="collapse(this)" data-collapsed="false">-</a>-->
 		</div>
 		<!-- TREE CONTROL -->
 			<div id="showContainers">
@@ -175,7 +180,7 @@
 				<thead>
 					<tr>
 						<th></th>
-						
+						<th>Name</th>
 						<th>Location</th>
 						<th>Status</th>
 						<th></th>
@@ -189,6 +194,7 @@
 							</button>
 						</td>
 						
+						<td>{{row.name}}</td>
 						<td>{{row.location}}</td>
 						<td>{{row.status}}</td>
 						
@@ -380,6 +386,17 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log, $rootScope) {
 	$scope.agentSelected = false;
 	$scope.neighbourInput = false;
 	
+	$scope.collapse = function(item) {
+		$('.sidebar').toggle('slide', {direction : 'left'}, 500);
+		//$(item).css({position : 'absolute', left: 0});
+		if ($scope.openButtonShow == false) {
+			$scope.openButtonShow = true;
+			$('#createAgent').animate({left: '33.3%', width: '66.6%'});
+		}else{
+			$scope.openButtonShow = false;
+			$('#createAgent').animate({left: '0px', width:'100%'});
+		}
+	}
 	$scope.addNeighbour = function() {
 		$scope.neighbourInput = true;
 	}
@@ -440,7 +457,7 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log, $rootScope) {
       alert("Could not load container JSON data. This should never happen, as the data is served locally. Soz.")
     });
 	}
-	$scope.neighbours = [{location : 'http://192.168.5.1:9000', status : 'active'}];
+	$scope.neighbours = [{name: 'welcome', location : 'http://192.168.5.1:9000', status : 'active'}];
 	
 	$scope.agentFiles = [];
 	
@@ -472,8 +489,11 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log, $rootScope) {
 			        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 			    }
 			})
+			.success(function(){
+	        	getStarInfo();
+	        })
 	        .error(function(response){
-	          
+	          alert('Could not spawn '+$scope.containerName);
 	        });
 	}
 	
@@ -485,7 +505,6 @@ app.controller('AppCtrl', function($scope, $http, $modal, $log, $rootScope) {
 	        	 getStarInfo();
 	        })
 	        .error(function(response){
-	            alert(response);
 	        });
 	}
 	$scope.deleteAgent = function(row) {

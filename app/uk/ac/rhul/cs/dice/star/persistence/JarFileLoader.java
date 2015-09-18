@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -41,7 +42,8 @@ import com.google.common.io.ByteStreams;
 public final class JarFileLoader extends ClassLoader {
 	private final JarFile file;
 	private final String path;
-
+	static ClassLoader loader;
+	
 	public JarFileLoader(File file) throws IOException {
 
 		path = file.getAbsolutePath();
@@ -72,9 +74,14 @@ public final class JarFileLoader extends ClassLoader {
 
 		Set<Class<?>> classes = new HashSet<Class<?>>();
 		
-		URL[] urls = { new URL("jar:file://" + path+"!/") };
-		URLClassLoader loader = URLClassLoader.newInstance(urls,Play.current().classloader());
 		
+		URL[] urls = { new URL("jar:file://" + path+"!/") };
+		
+		if (loader == null) {
+			loader = new DynamicClassLoader(urls, Play.current().classloader());	
+		}else{
+			((DynamicClassLoader)loader).addURL(urls[0]);
+		}
 		while (e.hasMoreElements()) {
 			JarEntry je = (JarEntry) e.nextElement();
 			
@@ -104,8 +111,12 @@ public final class JarFileLoader extends ClassLoader {
 		Set<Class<?>> classes = new HashSet<Class<?>>();
 		
 		URL[] urls = { new URL("jar:file://" + path+"!/") };
-		URLClassLoader loader = URLClassLoader.newInstance(urls,Play.current().classloader());
+		if (loader == null) {
+			loader = new DynamicClassLoader(urls, Play.current().classloader());
 		
+		}else{
+			((DynamicClassLoader)loader).addURL(urls[0]);
+		}
 		while (e.hasMoreElements()) {
 			JarEntry je = (JarEntry) e.nextElement();
 			
@@ -311,4 +322,24 @@ public final class JarFileLoader extends ClassLoader {
 			throw new ClassNotFoundException(name, exception);
 		}
 	}
+}
+class DynamicClassLoader extends URLClassLoader{
+  
+	
+    /**
+     * @param urls, to carryforward the existing classpath.
+     */
+    public DynamicClassLoader(URL[] urls, ClassLoader loader) {
+        super(urls, loader);
+        
+    }
+     
+    @Override
+    /**
+     * add ckasspath to the loader.
+     */
+    public void addURL(URL url) {
+        super.addURL(url);
+    }
+  
 }

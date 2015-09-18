@@ -32,7 +32,7 @@ public abstract class Package extends Model{
 	public Date date = new Date();
 	
 	public Package() {
-		
+	
 	}
 	public Package(String name) {
 		this.name = name;
