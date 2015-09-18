@@ -20,7 +20,10 @@ These entail:
 - Opening the Kitematic GUI
 - Creating a Docker Hub account (optional)
 
-In the UI, search for ```noddybear/star ```.
+In the UI, search for 
+```sh
+noddybear/star 
+```.
 Click 'create' to spin up a new STAR System. Click on the now running container on the left side of the UI. To the right of 'IP & PORTS', click the Cog icon. This should present you with 2 ports. One is the _local_ Docker port, namely, the port the STAR System is running on inside the Docker container. To the right of that is the _global_ IP address and port. This is the location that you can use to access STAR.
 
 
