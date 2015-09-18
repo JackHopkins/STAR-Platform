@@ -21,19 +21,22 @@ These entail:
 - Creating a Docker Hub account (optional)
 
 In the UI, search for 
-```sh
+```
 noddybear/star 
-```.
+```
 Click 'create' to spin up a new STAR System. Click on the now running container on the left side of the UI. To the right of 'IP & PORTS', click the Cog icon. This should present you with 2 ports. One is the _local_ Docker port, namely, the port the STAR System is running on inside the Docker container. To the right of that is the _global_ IP address and port. This is the location that you can use to access STAR.
 
 
 > If you don't want to install the Docker Toolbox, you can do the following: As Docker containers are only supported on Linux, if you're using a Mac or Windows, install [Boot2Docker](http://boot2docker.io/). Boot2Docker is a lightweight Linux virtual machine which encapsulates a single Docker container.
 
 Open a new Web Browser window and type in the _global_ location, like:
-```http://192.168.99.100:32770/v1/welcome/tutorial-agent```.
+
+```http://192.168.99.100:32770/v1/welcome/tutorial-agent ```
+
 (Obviously with the correct port and IP address.)
 
-This should now display the following text: ```Hello World From within a dynamic view```.
+This should now display the following text: 
+```Hello World From within a dynamic view```.
 Success! You've just sent a HTTP request to your first agent, and it says hello.
 
 # Running your first application
