@@ -1,6 +1,10 @@
 # About
 Star is a web first, multi-agent framework built on the JVM implemented using the [Play framework](playframework.com), with [Golem](http://www.cs.rhbnc.ac.uk/home/kostas/pubs/debs09.pdf) as its agent runtime.
 Star allows agents to communicate [RESTfully](https://en.wikipedia.org/wiki/Representational_state_transfer) with external web services, other agents and even users. 
+
+#How is STAR different?
+In Star, an agent is analogous to a Microservice in distributed computing. It can respond to external requests over HTTP, and also to internal messages from other agents. Each agent can have one or more resources which can also be served to outside entities, including full HTML pages and Javascripts. This means that as a developer, you can build fully functional webapps sitting atop an agent as a backend.
+
 # Taxonomy
 The Star project is composed of 4 sub-projects.
 ##### Star Platform
@@ -8,7 +12,7 @@ This is the main runtime for a Star environment. It offers a restful API and the
 ##### Star Core
 This is the root dependency for Star, and contains all of the underlying code for Golem agents to interoperate. 
 ##### Star SDK
-This is a test harness, allowing developers to test and run basic multi-agent applications. Unfortunately the SDK currently does not expose a Restful api.
+This is a test harness, allowing developers to test and run basic multi-agent applications. Unfortunately the SDK currently does not expose a RESTful api, meaning that functionality available in the main platform (such as dynamically spawning agents and containers) cannot be done in the SDK.
 ##### Star Examples
 This project contains a set of example applications which can be deployed into a running Star Platform.
 
@@ -20,11 +24,11 @@ These entail:
 - Opening the Kitematic GUI
 - Creating a Docker Hub account (optional)
 
-In the UI, search for ```noddybear/star ```.
-Click 'create' to spin up a new STAR System. Click on the now running container on the left side of the UI. To the right of 'IP & PORTS', click the Cog icon. This should present you with 2 ports. One is the _local_ Docker port, namely, the port the STAR System is running on inside the Docker container. To the right of that is the _global_ IP address and port. This is the location that you can use to access STAR.
+In the Kinematic UI, search for ```noddybear/star ```.
+Click 'create' to spin up a new STAR System. Click on the now running docker container on the left side of the UI. To the right of 'IP & PORTS', click the Cog icon. This should present you with 2 ports. One is the _local_ Docker port, namely, the port the STAR System is running on inside the Docker container. To the right of that is the _global_ IP address and port. This is the location that you can use to access STAR.
 
 
-> If you don't want to install the Docker Toolbox, you can install [Boot2Docker](http://boot2docker.io/). Boot2Docker is a lightweight Linux virtual machine which encapsulates a single Docker container.
+> If you don't want to install the Docker Toolbox, you can install [Boot2Docker](http://boot2docker.io/). Boot2Docker is a lightweight Linux virtual machine which encapsulates a single Docker container. This approach has been deprecated however, and is not recommended.
 
 Open a new Web Browser window and type in the _global_ location, like:
 ``` http://192.168.99.100:32770/v1/welcome/tutorial-agent ```
@@ -41,7 +45,7 @@ Navigate to: ``` http://192.168.99.100:32770/containers ``` in the browser of yo
 
 ### Cleaning Robot Application
 The Cleaning Robot project will be our HelloWorld application.
-- Download/pull the master branch of the Star Examples project
+- Download/pull the master branch of the [Star Examples project](https://github.com/JackHopkins/STAR-Examples)
 - Navigate to ``` uk.ac.rhul.cs.dice.star.example.dirt ``` in your IDE of choice.
 - In this directory you will see several .java files, and a .jar file called _dirtphysics.jar_, which contains all of the physics source files.
 - In the dashboard, click _Upload Physics_ and navigate to the above .jar file. Upload it.
